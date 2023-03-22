@@ -403,8 +403,95 @@ int array_add ( array *p_array, void *p_element )
 
 int array_clear ( array *p_array )
 {
+
+    // Argument check
+    {
+        if(p_array == (void *)0)
+            goto no_array;
+    }
+
+    // Lock
+    lock_mutex(&p_array->lock);
+
+    // Clear the entries
     memset(p_array->elements, 0, sizeof(void*)*p_array->iterable_max);
+
+    // Clear the element counter
     p_array->element_count = 0;
+
+    // Unlock
+    unlock_mutex(&p_array->lock);
+
+    // Success
+    return 1;
+
+    // Error handling
+    {
+        
+        // Argument errors
+        {
+            no_array:
+                #ifndef NDEBUG
+                    printf("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+
+        }
+    }
+}
+
+int array_free_clear ( array *p_array, void (*free_fun_ptr)(void *) )
+{
+
+    // Argument check
+    {
+        if( p_array == (void *)0 )
+            goto no_array;
+        if( free_fun_ptr == (void *)0 )
+            goto no_free_func;
+        
+    }
+
+    // Iterate over each element in the array
+    for (size_t i = 0; i < p_array->element_count; i++)
+    {
+        
+        // Call the free function
+        free_fun_ptr(p_array->elements[i]);
+
+        // Clear the reference from the array
+        p_array->elements[i] = 0;
+    }
+
+    // Clear the element counter
+    p_array->element_count = 0;
+
+    return 1;
+
+    // Error handling
+    {
+        
+        // Argument errors
+        {
+            no_array:
+                #ifndef NDEBUG
+                    printf("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+            
+            no_free_func:
+                #ifndef NDEBUG
+                    printf("[array] Null pointer provided for \"free_fun_ptr\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
+    }
 }
 
 int array_destroy ( array  **pp_array )

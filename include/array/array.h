@@ -73,8 +73,8 @@ DLLEXPORT int array_from_elements ( array **pp_array, void **elements );
 /** !
  *  Get an array of elements
  *
- * @param p_array      array
- * @param ppp_elements return
+ * @param p_array     array
+ * @param pp_elements return
  *
  * @sa array_values
  *
@@ -101,6 +101,18 @@ DLLEXPORT int array_add ( array *p_array, void *p_element );
  * @return 1 on success, 0 on error
  */
 DLLEXPORT int array_clear ( array *p_array );
+
+/** !
+ *  Remove all elements from an array, and deallocate values with free_func
+ *
+ * @param p_array      array
+ * @param free_fun_ptr pointer to deallocator function 
+ * 
+ * @sa array_clear
+ *
+ * @return 1 on success, 0 on error
+ */
+DLLEXPORT int array_free_clear ( array *p_array, void (*free_fun_ptr)(void *) );
 
 // Destructors
 /** !
