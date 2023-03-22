@@ -326,9 +326,6 @@ int array_add ( array *p_array, void *p_element )
     {
         if(p_array == (void *)0)
             goto no_array;
-
-        if (p_element == (void *)0)
-            goto no_element;
     }
 
     // Lock
@@ -371,14 +368,6 @@ int array_add ( array *p_array, void *p_element )
             no_array:
                 #ifndef NDEBUG
                     printf("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-
-                // Error
-                return 0;
-
-            no_element:
-                #ifndef NDEBUG
-                    printf("[array] Null pointer provided for \"p_element\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
