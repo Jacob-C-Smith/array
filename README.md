@@ -1,2 +1,2 @@
-# Array
- Array Implementation
+# array
+ array Implementation
