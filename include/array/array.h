@@ -119,7 +119,7 @@ DLLEXPORT int array_free_clear ( array *p_array, void (*free_fun_ptr)(void *) );
  * Call function on every element in p_array
  *
  * @param p_array  array
- * @param function pointer to deallocator function 
+ * @param function pointer to function
  * 
  * @return 1 on success, 0 on error
  */
