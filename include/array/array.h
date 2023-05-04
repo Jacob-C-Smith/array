@@ -114,6 +114,17 @@ DLLEXPORT int array_clear ( array *p_array );
  */
 DLLEXPORT int array_free_clear ( array *p_array, void (*free_fun_ptr)(void *) );
 
+// Iterators
+/** !
+ * Call function on every element in p_array
+ *
+ * @param p_array  array
+ * @param function pointer to deallocator function 
+ * 
+ * @return 1 on success, 0 on error
+ */
+DLLEXPORT int array_foreach ( array *p_array, void (*function)(void *) );
+
 // Destructors
 /** !
  *  Destroy and deallocate an array

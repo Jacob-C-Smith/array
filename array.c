@@ -483,6 +483,50 @@ int array_free_clear ( array *p_array, void (*free_fun_ptr)(void *) )
     }
 }
 
+int array_foreach ( array *p_array, void (*function)(void *) )
+{
+
+    // Argument check
+    {
+        if( p_array == (void *)0 )
+            goto no_array;
+        if( function == (void *)0 )
+            goto no_free_func;
+    }
+
+    // Iterate over each element in the array
+    for (size_t i = 0; i < p_array->element_count; i++)
+        
+        // Call the free function
+        function(p_array->elements[i]);
+
+    // Success
+    return 1;
+
+    // Error handling
+    {
+        
+        // Argument errors
+        {
+            no_array:
+                #ifndef NDEBUG
+                    printf("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+            
+            no_free_func:
+                #ifndef NDEBUG
+                    printf("[array] Null pointer provided for \"function\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
+    }
+}
+
 int array_destroy ( array  **pp_array )
 {
 
