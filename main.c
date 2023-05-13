@@ -42,13 +42,12 @@ int print_all_elements(array* p_array)
         return 0;
 
     // Get the arrays' elements
-    size_t   element_count = 0;
     void   **pp_elements   = 0;
     size_t  *count         = 0;
 
-    array_get(p_array, 0, element_count);
-    pp_elements = calloc(element_count, sizeof(void *));
-    array_get(p_array, pp_elements, &count);
+    array_get(p_array, 0, &count);
+    pp_elements = calloc(count, sizeof(void *));
+    array_get(p_array, pp_elements, 0);
 
     // Print each key
     for (size_t i = 0; i < count; i++)
