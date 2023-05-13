@@ -43,7 +43,7 @@ int print_all_elements(array* p_array)
 
     // Get the arrays' elements
     void   **pp_elements   = 0;
-    size_t  *count         = 0;
+    size_t   count         = 0;
 
     array_get(p_array, 0, &count);
     pp_elements = calloc(count, sizeof(void *));
