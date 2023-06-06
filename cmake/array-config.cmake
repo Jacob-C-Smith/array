@@ -5,8 +5,8 @@ cmake_minimum_required(VERSION 3.0)
 
 include(FeatureSummary)
 set_package_properties(ARRAY PROPERTIES
-    URL "https://www.libsdl.org/"
-    DESCRIPTION "low level access to audio, keyboard, mouse, joystick, and graphics hardware"
+    URL "https://www.g10.app/ADT/array"
+    DESCRIPTION "Array ADT"
 )
 
 # Copied from `configure_package_config_file`
@@ -44,8 +44,8 @@ set(ARRAY_LIBRARIES ARRAY::ARRAY)
 # All targets are created, even when some might not be requested though COMPONENTS.
 # This is done for compatibility with CMake generated ARRAY-target.cmake files.
 
-set(_ARRAY_library     "${ARRAY_LIBDIR}/ARRAY.lib")
-set(_ARRAY_dll_library "${ARRAY_BINDIR}/ARRAY.dll")
+set(_ARRAY_library     "${ARRAY_LIBDIR}/array.lib")
+set(_ARRAY_dll_library "${ARRAY_BINDIR}/array.dll")
 if(EXISTS "${_ARRAY_library}" AND EXISTS "${_ARRAY_dll_library}")
     if(NOT TARGET ARRAY::ARRAY)
         add_library(ARRAY::ARRAY SHARED IMPORTED)
