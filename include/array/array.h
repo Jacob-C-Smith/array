@@ -11,6 +11,7 @@
 // Standard library
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 
 // Platform dependent macros
@@ -46,7 +47,7 @@ DLLEXPORT int array_create ( array **pp_array );
  *  Construct an array with a specific size
  *
  * @param pp_array return
- * @param size     number of elements in an array
+ * @param size number of elements in an array
  *
  * @sa array_create
  * @sa array_destroy
@@ -60,7 +61,7 @@ DLLEXPORT int array_construct ( array **pp_array, size_t size );
  *
  * @param pp_array return
  * @param elements pointer to null terminated array of element pointers
- * @param size     number of elements. 
+ * @param size number of elements. 
  *
  * @sa array_create
  * @sa array_destroy
@@ -71,9 +72,21 @@ DLLEXPORT int array_from_elements ( array **pp_array, void **elements );
 
 // Accessors
 /** !
+ * Index an array with a signed number. If index is negative, index = size - |index|, such that
+ * [A,B,C,D,E] index(-2) -> D
+ * 
+ * @param p_array array
+ * @param index signed index. 
+ * @param pp_value return
+ * 
+ * @return 1 on success, 0 on error 
+ */
+DLLEXPORT int array_index ( array *p_array, signed index, void **pp_value );
+
+/** !
  *  Get an array of elements
  *
- * @param p_array     array
+ * @param p_array array
  * @param pp_elements return
  *
  * @sa array_values
@@ -82,11 +95,29 @@ DLLEXPORT int array_from_elements ( array **pp_array, void **elements );
  */
 DLLEXPORT int array_get ( array *p_array, void **pp_elements, size_t *p_count );
 
+/** !
+ *  Is an array empty?
+ * 
+ * @param p_array an array
+ * 
+ * @return true if array has no contents else false
+ */
+DLLEXPORT bool array_is_empty ( array *p_array );
+
+/** !
+ *  Get the size of an array
+ * 
+ * @param p_array an array
+ * 
+ * @return size of array
+ */
+DLLEXPORT size_t array_size ( array *p_array );
+
 // Mutators
 /** !
  *  Add an element to an array. 
  *
- * @param p_array   array
+ * @param p_array array
  * @param p_element the value of the element
  *
  * @return 1 on success, 0 on error
@@ -105,7 +136,7 @@ DLLEXPORT int array_clear ( array *p_array );
 /** !
  *  Remove all elements from an array, and deallocate values with free_func
  *
- * @param p_array      array
+ * @param p_array array
  * @param free_fun_ptr pointer to deallocator function 
  * 
  * @sa array_clear
@@ -118,12 +149,12 @@ DLLEXPORT int array_free_clear ( array *p_array, void (*free_fun_ptr)(void *) );
 /** !
  * Call function on every element in p_array
  *
- * @param p_array  array
- * @param function pointer to function
+ * @param p_array array
+ * @param function pointer to function of type void (*)(void *value, size_t index)
  * 
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int array_foreach ( array *p_array, void (*function)(void *) );
+DLLEXPORT int array_foreach_i ( array *p_array, void (*function)(void *value, size_t index) );
 
 // Destructors
 /** !

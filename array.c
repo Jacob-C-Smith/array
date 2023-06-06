@@ -276,6 +276,61 @@ int array_from_elements ( array **pp_array, void **elements )
     }
 }
 
+int array_index ( array *p_array, signed index, void **pp_value )
+{
+
+    // Argument errors
+    {
+        #ifndef NDEBUG
+            if ( p_array == (void *) 0 ) goto no_array;
+            if ( pp_value == (void *) 0 ) goto no_value;
+        #endif
+    }
+
+    // Positive index
+    if ( index <= 0 )
+    {
+        *pp_value = p_array->elements[index];
+    }
+
+    // Negative numbers
+    else 
+    {
+        *pp_value = p_array->elements[p_array->element_count - ( index * -1 )];
+    }
+
+    // Success
+    return 1;
+
+    // Error handling
+    {
+        no_array:
+            #ifndef NDEBUG
+                printf("[array] Null pointer provided for parameter \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+            #endif
+
+            // Error handling
+            return 0;
+
+        out_of_bounds:
+            #ifndef NDEBUG
+                printf("[array] Index out of bounds in call to function \"%s\"\n", __FUNCTION__);
+            #endif
+
+            // Error handling
+            return 0;
+
+        no_value:
+            #ifndef NDEBUG
+                printf("[array] Null pointer provided for parameter \"pp_vale\" in call to function \"%s\"\n", __FUNCTION__);
+            #endif
+
+            // Error handling
+            return 0;
+
+    }
+}
+
 int array_get ( array *p_array, void **pp_elements, size_t *p_count )
 {
 
@@ -314,6 +369,63 @@ int array_get ( array *p_array, void **pp_elements, size_t *p_count )
                 #endif
 
                 // Error 
+                return 0;
+        }
+    }
+}
+
+bool array_is_empty ( array *p_array )
+{
+
+    // Argument check
+    {
+        #ifndef NDEBUG
+            if ( p_array == (void *) 0 ) goto no_array;
+        #endif
+    }
+
+    // Success
+    return 1;
+
+    // Error handling
+    {
+
+        // Argument errors
+        {
+            no_array:
+                #ifndef NDEBUG
+                    printf("[array] Null pointer provided for parameter \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
+    }
+}
+size_t array_size ( array *p_array )
+{
+
+    // Argument check
+    {
+        #ifndef NDEBUG
+            if ( p_array == (void *) 0 ) goto no_array;
+        #endif
+    }
+
+    // Success
+    return 1;
+
+    // Error handling
+    {
+
+        // Argument errors
+        {
+            no_array:
+                #ifndef NDEBUG
+                    printf("[array] Null pointer provided for parameter \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
                 return 0;
         }
     }

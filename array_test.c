@@ -70,7 +70,7 @@ int construct_empty_fromelementsAB_AB   ( array **pp_array );
 int construct_empty_fromelementsA_A     ( array **pp_array );
 
 // Entry point
-int main(int argc, const char* argv[])
+int main ( int argc, const char* argv[] )
 {
     // Run tests
     run_tests();
@@ -79,24 +79,29 @@ int main(int argc, const char* argv[])
     return EXIT_SUCCESS;
 }
 
-int run_tests ()
+int run_tests ( )
 {
     // ... -> []
     test_empty_array(construct_empty, "empty");
 
+
     // [] -> add(A) -> [A]
     test_one_element_array(construct_empty_addA_A, "empty_addA_A", (char **)A_elements);
 
-    // [A] -> add(B) -> [A,B]
-    //test_two_element_dict(construct_A_addB_AB, "A_addB_AB", (char **)AB_elements);
-        
-    // [A,B] -> add(C) -> [A,B,C]
-    //test_three_element_dict(construct_AB_addC_ABC, "AB_addC_ABC", (char **)ABC_elements);
-        
-    // [A,B,C] -> clear() -> []
+    // [A] -> add(B) -> [A, B]
+    test_two_element_array(construct_A_addB_AB, "A_addB_AB", (char **)AB_elements);
+
+    // [A] -> add(C) -> [A, B, C]
+    test_three_element_array(construct_AB_addC_ABC, "AB_addC_ABC", (char **)ABC_elements);
+
+
+
+    // [A, B, C] -> 
+
+    // [A, B, C] -> clear() -> []
     test_empty_array(construct_ABC_clear_empty, "ABC_clear_empty");
  
-    // [A,B] -> clear() -> []
+    // [A, B] -> clear() -> []
     test_empty_array(construct_AB_clear_empty, "AB_clear_empty");
 
     // [A] -> clear() -> []
@@ -105,7 +110,7 @@ int run_tests ()
     // Success
     return 1;
 }
-int print_final_summary ()
+int print_final_summary ( )
 {
 
     // Accumulate
@@ -148,7 +153,7 @@ int print_test ( const char *scenario_name, const char *test_name, bool passed )
     return 1;
 }
 
-bool test_add       ( int(*array_constructor)(array **pp_array), void  *value          , result_t expected )
+bool test_add ( int(*array_constructor)(array **pp_array), void  *value          , result_t expected )
 {
 
     // Initialized data
@@ -166,7 +171,7 @@ bool test_add       ( int(*array_constructor)(array **pp_array), void  *value   
     // Return result
     return (result == expected);
 }
-bool test_get       ( int(*array_constructor)(array **pp_array), void **expected_values, result_t expected )
+bool test_get ( int(*array_constructor)(array **pp_array), void **expected_values, result_t expected )
 {
 
     // Initialized data
@@ -216,7 +221,7 @@ bool test_get_count ( int(*array_constructor)(array **pp_array), size_t expected
     return (result == expected);
 }
 
-int construct_empty                     ( array **pp_array )
+int construct_empty ( array **pp_array )
 {
     // Construct an array
     array_construct(pp_array, 1);
@@ -224,93 +229,117 @@ int construct_empty                     ( array **pp_array )
     // array = []
     return 1;
 }
-int construct_empty_addA_A              ( array **pp_array )
+int construct_empty_addA_A ( array **pp_array )
 {
 
     // Construct a [] array
     construct_empty(pp_array);
 
-    // add(A)
+    // [] -> add(A) -> [A]
     array_add(*pp_array, A_element);
  
     // array = [A]
     // Success
     return 1;
 }
-int construct_A_addB_AB                 ( array **pp_array )
+int construct_A_addB_AB ( array **pp_array )
 {
 
     // Construct an [A] array 
     construct_empty_addA_A(pp_array);
 
-    // add(B)
+    // [A] -> add(B) -> [B]
     array_add(*pp_array , B_element);
  
     // array = [A, B]
     // Success
     return 1;
 }
-int construct_AB_addC_ABC               ( array **pp_array )
+int construct_AB_addC_ABC ( array **pp_array )
 {
 
     // Construct an [A, B] array
     construct_A_addB_AB(pp_array);
 
-    // add(C)
+    // [A, B] -> add(C) -> [A, B, C]
     array_add(*pp_array, C_element);
 
     // array = [A, B, C]
     // Success
     return 1;
 }
-int construct_ABC_clear_empty           ( array **pp_array )
+int construct_ABC_clear_empty ( array **pp_array )
 {
     // Construct an [A, B, C] array
     construct_AB_addC_ABC(pp_array);
 
-    // clear()
+    // [A, B, C] -> clear() -> []
     array_clear(*pp_array);
 
     // array = []
     // Success
     return 1;
 }
-int construct_AB_clear_empty            ( array **pp_array )
+int construct_AB_clear_empty ( array **pp_array )
 {
     // Construct an [A, B] array
     construct_A_addB_AB(pp_array);
 
-    // clear()
+    // [A, B] -> clear() -> []
     array_clear(*pp_array);
 
     // array = []
     // Success
     return 1;
 }
-int construct_A_clear_empty             ( array **pp_array )
+int construct_A_clear_empty ( array **pp_array )
 {
 
     // Construct an [A] array
     construct_empty_addA_A(pp_array);
 
-    // clear()
+    // [A] -> clear() -> []
     array_clear(*pp_array);
 
     // array = []
     // Success
     return 1;
 }
-int construct_empty_fromelementsABC_ABC ( array **pp_array );
-int construct_empty_fromelementsAB_AB   ( array **pp_array );
-int construct_empty_fromelementsA_A     ( array **pp_array );
+int construct_empty_fromelementsABC_ABC ( array **pp_array )
+{
 
-int test_empty_array         ( int (*array_constructor)(array **pp_array), char *name)
+    array_from_elements(pp_array, ABC_elements);
+
+    // Success
+    return 1;
+}
+int construct_empty_fromelementsAB_AB ( array **pp_array )
+{
+
+    array_from_elements(pp_array, AB_elements);
+
+    // Success
+    return 1;
+}
+int construct_empty_fromelementsA_A ( array **pp_array )
+{
+
+    array_from_elements(pp_array, A_elements);
+
+    // Success
+    return 1;
+}
+
+int test_empty_array ( int (*array_constructor)(array **pp_array), char *name)
 {
 
     printf("Scenario: %s\n", name);
 
     print_test(name, "array_add_A"    , test_add(array_constructor, A_element, one) );
     print_test(name, "array_add_B"    , test_add(array_constructor, B_element, one) );
+    print_test(name, "array_index0"   , test_index(array_constructor, (void *)0, zero) );
+    print_test(name, "array_index-1"  , test_index(array_constructor, (void *)0, zero) );
+    print_test(name, "array_index1"   , test_index(array_constructor, (void *)0, zero) );
     print_test(name, "array_get"      , test_get(array_constructor, _elements, zero) );    
     print_test(name, "array_get_count", test_get_count(array_constructor, 0, match) );
 
@@ -318,12 +347,17 @@ int test_empty_array         ( int (*array_constructor)(array **pp_array), char 
 
     return 1;
 }
-int test_one_element_array   ( int (*array_constructor)(array **pp_array), char *name, void **values )
+int test_one_element_array ( int (*array_constructor)(array **pp_array), char *name, void **values )
 {
 
     printf("SCENARIO: %s\n", name);
 
     print_test(name, "array_add_D"    , test_add(array_constructor, D_element, one) );
+    print_test(name, "array_get"      , test_get(array_constructor, values, zero) );
+    print_test(name, "array_size"     , test_array_size(array_construct, 2, match));
+    print_test(name, "array_index0"   , test_index(array_constructor, A_element, one) );
+    print_test(name, "array_index-1"  , test_index(array_constructor, (void *)0, zero) );
+    print_test(name, "array_index1"   , test_index(array_constructor, (void *)0, zero) );
     print_test(name, "array_get"      , test_get(array_constructor, values, zero) );    
     print_test(name, "array_get_count", test_get_count(array_constructor, 1, match) );
     
@@ -332,5 +366,44 @@ int test_one_element_array   ( int (*array_constructor)(array **pp_array), char 
     // Success
     return 1;
 }
-int test_two_element_array   ( int (*array_constructor)(array **pp_array), char *name, void **values );
-int test_three_element_array ( int (*array_constructor)(array **pp_array), char *name, void **values );
+int test_two_element_array ( int (*array_constructor)(array **pp_array), char *name, void **values )
+{
+    printf("SCENARIO: %s\n", name);
+
+    print_test(name, "array_add_D"    , test_add(array_constructor, D_element, one) );
+    print_test(name, "array_get"      , test_get(array_constructor, values, zero) );
+    print_test(name, "array_size"     , test_array_size(array_construct, 2, match));
+    print_test(name, "array_index0"   , test_index(array_constructor, A_element, one) );
+    print_test(name, "array_index-1"  , test_index(array_constructor, (void *)0, one) );
+    print_test(name, "array_index1"   , test_index(array_constructor, (void *)0, one) );  
+    print_test(name, "array_index-2"  , test_index(array_constructor, (void *)0, zero) );
+    print_test(name, "array_index2"   , test_index(array_constructor, (void *)0, zero) );  
+    print_test(name, "array_get_count", test_get_count(array_constructor, 2, match) );
+    
+    print_final_summary();
+    
+    // Success
+    return 1;
+}
+int test_three_element_array ( int (*array_constructor)(array **pp_array), char *name, void **values )
+{
+    printf("SCENARIO: %s\n", name);
+
+    print_test(name, "array_add_D"    , test_add(array_constructor, D_element, one) );
+    print_test(name, "array_get"      , test_get(array_constructor, values, zero) );
+    print_test(name, "array_size"     , test_array_size(array_construct, 3, match));
+    print_test(name, "array_index0"   , test_index(array_constructor, values[0], one) );
+    print_test(name, "array_index-1"  , test_index(array_constructor, values[2], one) );
+    print_test(name, "array_index1"   , test_index(array_constructor, values[1], one) );  
+    print_test(name, "array_index-2"  , test_index(array_constructor, values[1], one) );
+    print_test(name, "array_index2"   , test_index(array_constructor, values[2], one) );  
+    print_test(name, "array_index-3"  , test_index(array_constructor, values[0], one) );
+    print_test(name, "array_index3"   , test_index(array_constructor, (void *)0, zero) );  
+    print_test(name, "array_index-4"  , test_index(array_constructor, (void *)0, zero) );  
+    print_test(name, "array_get_count", test_get_count(array_constructor, 3, match) );
+    
+    print_final_summary();
+    
+    // Success
+    return 1;
+}
