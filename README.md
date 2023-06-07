@@ -1,6 +1,6 @@
 # array
-[![CMake](https://github.com/Jacob-C-Smith/array/actions/workflows/cmake.yml/badge.svg)](https://github.com/Jacob-C-Smith/array/actions/workflows/cmake.yml)
- 
+[![CMake](https://github.com/Jacob-C-Smith/array/actions/workflows/cmake.yml/badge.svg?branch=main)](https://github.com/Jacob-C-Smith/array/actions/workflows/cmake.yml)
+
  A minimal array implementation written in C. 
  
  > 1 [Download](#download)
