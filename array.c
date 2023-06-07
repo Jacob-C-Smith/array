@@ -1,5 +1,8 @@
 ﻿#include <array/array.h>
 
+#ifndef GMUTEX
+#define GMUTEX
+
 // Platform dependent includes
 #ifdef _WIN64
 #include <windows.h>
@@ -15,14 +18,8 @@
 #define mutex_t pthread_mutex_t
 #endif
 
-struct array_s {
-    size_t               element_count, // elements
-                         iterable_max;  // Iterable array bound
-    mutex_t              lock;          // Locked when writing values
-    void               **elements;      // Iterable elements
-};
-
-int create_mutex ( mutex_t *p_mutex )
+// Mutex operations
+static inline int create_mutex ( mutex_t *p_mutex )
 {
     #ifdef _WIN64
         *p_mutex = CreateMutex(0, FALSE, 0);
@@ -34,7 +31,7 @@ int create_mutex ( mutex_t *p_mutex )
     return 0;
 }
 
-int lock_mutex   ( mutex_t *p_mutex )
+static inline int lock_mutex ( mutex_t *p_mutex )
 {
     #ifdef _WIN64
         return ( WaitForSingleObject(*p_mutex, INFINITE) == WAIT_FAILED ? 0 : 1 );
@@ -45,7 +42,7 @@ int lock_mutex   ( mutex_t *p_mutex )
     return 0;
 }
 
-int unlock_mutex ( mutex_t *p_mutex )
+static inline int unlock_mutex ( mutex_t *p_mutex )
 {
     #ifdef _WIN64
         return ReleaseMutex(*p_mutex);
@@ -56,7 +53,7 @@ int unlock_mutex ( mutex_t *p_mutex )
     return 0;
 }
 
-int destroy_mutex ( mutex_t *p_mutex )
+static inline int destroy_mutex ( mutex_t *p_mutex )
 {
     #ifdef _WIN64
         return ( CloseHandle(*p_mutex) );
@@ -66,6 +63,14 @@ int destroy_mutex ( mutex_t *p_mutex )
 
     return 0;
 }
+#endif
+
+struct array_s {
+    size_t               element_count, // elements
+                         iterable_max;  // Iterable array bound
+    mutex_t              lock;          // Locked when writing values
+    void               **elements;      // Iterable elements
+};
 
 int array_create ( array **pp_array )
 {
