@@ -1,10 +1,13 @@
-cmake_minimum_required (VERSION 3.26)
+﻿cmake_minimum_required (VERSION 3.26)
 
 project ("array")
 
 # Comment out for Debug mode
 set(IS_DEBUG_BUILD CMAKE_BUILD_TYPE STREQUAL "Debug")
-set(HAS_ARRAY true)
+if ( NOT "${HAS_ARRAY}")
+    message("[array] Adding array project")
+    set(HAS_ARRAY true PARENT_SCOPE)
+endif()
 
 if (${IS_DEBUG_BUILD})
     add_compile_definitions(NDEBUG)
