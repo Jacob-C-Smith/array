@@ -1,4 +1,4 @@
-﻿#include <array/array.h>
+#include <array/array.h>
 
 #ifndef GMUTEX
 #define GMUTEX
