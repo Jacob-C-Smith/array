@@ -86,13 +86,13 @@ int run_tests ( )
 
 
     // [] -> add(A) -> [A]
-    test_one_element_array(construct_empty_addA_A, "empty_addA_A", (char **)A_elements);
+    test_one_element_array(construct_empty_addA_A, "empty_addA_A", (void **)A_elements);
 
     // [A] -> add(B) -> [A, B]
-    test_two_element_array(construct_A_addB_AB, "A_addB_AB", (char **)AB_elements);
+    test_two_element_array(construct_A_addB_AB, "A_addB_AB", (void **)AB_elements);
 
     // [A] -> add(C) -> [A, B, C]
-    test_three_element_array(construct_AB_addC_ABC, "AB_addC_ABC", (char **)ABC_elements);
+    test_three_element_array(construct_AB_addC_ABC, "AB_addC_ABC", (void **)ABC_elements);
 
 
 
@@ -308,7 +308,7 @@ int construct_A_clear_empty ( array **pp_array )
 int construct_empty_fromelementsABC_ABC ( array **pp_array )
 {
 
-    array_from_elements(pp_array, ABC_elements);
+    array_from_elements(pp_array, (void **)ABC_elements);
 
     // Success
     return 1;
@@ -316,7 +316,7 @@ int construct_empty_fromelementsABC_ABC ( array **pp_array )
 int construct_empty_fromelementsAB_AB ( array **pp_array )
 {
 
-    array_from_elements(pp_array, AB_elements);
+    array_from_elements(pp_array, (void **)AB_elements);
 
     // Success
     return 1;
@@ -324,7 +324,7 @@ int construct_empty_fromelementsAB_AB ( array **pp_array )
 int construct_empty_fromelementsA_A ( array **pp_array )
 {
 
-    array_from_elements(pp_array, A_elements);
+    array_from_elements(pp_array, (void **)A_elements);
 
     // Success
     return 1;
@@ -340,7 +340,7 @@ int test_empty_array ( int (*array_constructor)(array **pp_array), char *name)
     //print_test(name, "array_index0"   , test_index(array_constructor, (void *)0, zero) );
     //print_test(name, "array_index-1"  , test_index(array_constructor, (void *)0, zero) );
     //print_test(name, "array_index1"   , test_index(array_constructor, (void *)0, zero) );
-    print_test(name, "array_get"      , test_get(array_constructor, _elements, zero) );    
+    print_test(name, "array_get"      , test_get(array_constructor, (void **)_elements, zero) );    
     print_test(name, "array_get_count", test_get_count(array_constructor, 0, match) );
 
     print_final_summary();

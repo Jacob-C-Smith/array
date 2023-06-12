@@ -52,7 +52,7 @@ int print_all_elements(array* p_array)
     // Print each key
     for (size_t i = 0; i < count; i++)
     {
-        printf("[%i] %s\n", i, pp_elements[i]);
+        printf("[%lld] %s\n", i, (char *)pp_elements[i]);
     }
     
     // Formatting
