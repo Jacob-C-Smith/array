@@ -86,7 +86,7 @@ int array_create ( array **pp_array )
 
     // Error checking
     {
-        if( p_array == (void *) 0 )
+        if ( p_array == (void *) 0 )
             goto no_mem;
     }
 
@@ -341,7 +341,7 @@ int array_get ( array *p_array, void **pp_elements, size_t *p_count )
 
     // Argument check
     {
-        if( p_array == (void *) 0 )
+        if ( p_array == (void *) 0 )
             goto no_array;
     }
 
@@ -349,7 +349,7 @@ int array_get ( array *p_array, void **pp_elements, size_t *p_count )
     lock_mutex(&p_array->lock);
 
     // Return
-    if(pp_elements)
+    if (pp_elements)
     {
         memcpy(pp_elements, p_array->elements, sizeof(void *)*p_array->element_count);
     }
@@ -441,7 +441,7 @@ int array_add ( array *p_array, void *p_element )
 
     // Argument check
     {
-        if(p_array == (void *)0)
+        if ( p_array == (void *) 0 ) 
             goto no_array;
     }
 
@@ -512,7 +512,7 @@ int array_clear ( array *p_array )
 
     // Argument check
     {
-        if(p_array == (void *)0)
+        if ( p_array == (void *) 0 )
             goto no_array;
     }
 
@@ -553,11 +553,8 @@ int array_free_clear ( array *p_array, void (*free_fun_ptr)(void *) )
 
     // Argument check
     {
-        if( p_array == (void *)0 )
-            goto no_array;
-        if( free_fun_ptr == (void *)0 )
-            goto no_free_func;
-        
+        if ( p_array      == (void *) 0 ) goto no_array;
+        if ( free_fun_ptr == (void *) 0 ) goto no_free_func;
     }
 
     // Iterate over each element in the array
@@ -605,10 +602,8 @@ int array_foreach ( array *p_array, void (*function)(void *) )
 
     // Argument check
     {
-        if( p_array == (void *)0 )
-            goto no_array;
-        if( function == (void *)0 )
-            goto no_free_func;
+        if ( p_array  == (void *) 0 ) goto no_array;
+        if ( function == (void *) 0 ) goto no_free_func;
     }
 
     // Iterate over each element in the array
