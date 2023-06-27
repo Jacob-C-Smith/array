@@ -1,5 +1,6 @@
 ﻿/** !
  * @file array/array.h 
+ * 
  * @author Jacob Smith
  * 
  * Include header for array library
@@ -14,11 +15,19 @@
 #include <stdbool.h>
 #include <string.h>
 
+// Debug mode
+#undef NDEBUG
+
 // Platform dependent macros
 #ifdef _WIN64
 #define DLLEXPORT extern __declspec(dllexport)
 #else
 #define DLLEXPORT
+#endif
+
+// Memory management macro
+#ifndef ARRAY_REALLOC
+#define ARRAY_REALLOC(p, sz) realloc(p,sz)
 #endif
 
 // Forward declarations
