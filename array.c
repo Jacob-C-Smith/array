@@ -10,7 +10,8 @@
 #include <array/array.h>
 
 // Structure definitions
-struct array_s {
+struct array_s
+{
     size_t    element_count, // Elements
               iterable_max;  // Iterable array bound
     mutex     _lock;         // Locked when writing values
@@ -599,7 +600,7 @@ int array_destroy ( array  **pp_array )
     *pp_array = (array *) 0;
 
     // Unlock
-    mutex_unlock(&p_array->_lock);
+    mutex_unlock(p_array->_lock);
 
     // Free the array contents
     if ( ARRAY_REALLOC(p_array->elements, 0) )
