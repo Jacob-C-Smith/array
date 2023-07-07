@@ -17,7 +17,6 @@ if (${IS_DEBUG_BUILD})
     add_compile_definitions(NDEBUG)
 endif ()
 
-
 # Find the sync module
 if ( NOT "${HAS_SYNC}")
 
