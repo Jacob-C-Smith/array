@@ -9,7 +9,7 @@
 int print_all_elements(array* a);
 
 // Entry point
-int main(int argc, const char* argv[])
+int main ( int argc, const char* argv[] )
 {
 
     // Initialized data

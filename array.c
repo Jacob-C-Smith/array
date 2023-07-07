@@ -9,77 +9,11 @@
 // Headers
 #include <array/array.h>
 
-// Mutex
-#ifndef GMUTEX
-#define GMUTEX
-
-// Platform dependent includes
-#ifdef _WIN64
-#include <windows.h>
-#include <process.h>
-#else
-#include <pthread.h>
-#endif
-
-// Platform dependent macros
-#ifdef _WIN64
-#define mutex_t HANDLE
-#else
-#define mutex_t pthread_mutex_t
-#endif
-
-// Mutex operations
-static inline int create_mutex ( mutex_t *p_mutex )
-{
-    #ifdef _WIN64
-        *p_mutex = CreateMutex(0, FALSE, 0);
-        return ( p_mutex != 0 );
-    #else
-        return ( pthread_mutex_init(p_mutex, NULL) == 0 );
-    #endif
-
-    return 0;
-}
-
-static inline int lock_mutex ( mutex_t *p_mutex )
-{
-    #ifdef _WIN64
-        return ( WaitForSingleObject(*p_mutex, INFINITE) == WAIT_FAILED ? 0 : 1 );
-    #else
-        return ( pthread_mutex_lock(p_mutex) == 0 );
-    #endif
-
-    return 0;
-}
-
-static inline int unlock_mutex ( mutex_t *p_mutex )
-{
-    #ifdef _WIN64
-        return ReleaseMutex(*p_mutex);
-    #else
-        return ( pthread_mutex_unlock( p_mutex ) == 0 );
-    #endif
-
-    return 0;
-}
-
-static inline int destroy_mutex ( mutex_t *p_mutex )
-{
-    #ifdef _WIN64
-        return ( CloseHandle(*p_mutex) );
-    #else
-        return ( pthread_mutex_destroy(p_mutex) == 0 );
-    #endif
-
-    return 0;
-}
-#endif
-
 // Structure definitions
 struct array_s {
     size_t    element_count, // Elements
               iterable_max;  // Iterable array bound
-    mutex_t   lock;          // Locked when writing values
+    mutex     _lock;         // Locked when writing values
     void    **elements;      // Iterable elements
 };
 
@@ -164,7 +98,7 @@ int array_construct ( array **pp_array, size_t size )
     p_array->elements = ARRAY_REALLOC(0, size * sizeof(void *));
 
     // Create a mutex
-    if ( create_mutex(&p_array->lock) == 0 )
+    if ( mutex_create(&p_array->_lock) == 0 )
         goto failed_to_create_mutex;
 
     // Error checking
@@ -351,7 +285,7 @@ int array_get ( array *p_array, void **pp_elements, size_t *p_count )
     }
 
     // Lock
-    lock_mutex(&p_array->lock);
+    mutex_lock(p_array->_lock);
 
     // Return
     if (pp_elements)
@@ -361,7 +295,7 @@ int array_get ( array *p_array, void **pp_elements, size_t *p_count )
         *p_count = p_array->element_count;
 
     // Unlock
-    unlock_mutex(&p_array->lock);
+    mutex_unlock(p_array->_lock);
 
     // Success
     return 1;
@@ -393,7 +327,7 @@ bool array_is_empty ( array *p_array )
     }
 
     // Success
-    return (p_array->element_count == 0);
+    return ( p_array->element_count == 0 );
 
     // Error handling
     {
@@ -422,7 +356,7 @@ size_t array_size ( array *p_array )
     }
 
     // Success
-    return 1;
+    return p_array->element_count;
 
     // Error handling
     {
@@ -451,7 +385,7 @@ int array_add ( array *p_array, void *p_element )
     }
 
     // Lock
-    lock_mutex(&p_array->lock);
+    mutex_lock(p_array->_lock);
 
     // Update the iterables
     p_array->elements[p_array->element_count] = p_element;
@@ -475,7 +409,7 @@ int array_add ( array *p_array, void *p_element )
     }
 
     // Unlock
-    unlock_mutex(&p_array->lock);
+    mutex_unlock(p_array->_lock);
 
     // Success
     return 1;
@@ -502,7 +436,7 @@ int array_add ( array *p_array, void *p_element )
                 #endif
 
                 // Unlock
-                unlock_mutex(&p_array->lock);
+                mutex_unlock(p_array->_lock);
 
                 // Error
                 return 0;
@@ -521,7 +455,7 @@ int array_clear ( array *p_array )
     }
 
     // Lock
-    lock_mutex(&p_array->lock);
+    mutex_lock(p_array->_lock);
 
     // Clear the entries
     memset(p_array->elements, 0, sizeof(void*)*p_array->iterable_max);
@@ -530,7 +464,7 @@ int array_clear ( array *p_array )
     p_array->element_count = 0;
 
     // Unlock
-    unlock_mutex(&p_array->lock);
+    mutex_unlock(p_array->_lock);
 
     // Success
     return 1;
@@ -659,20 +593,20 @@ int array_destroy ( array  **pp_array )
     array *p_array = *pp_array;
 
     // Lock
-    lock_mutex(&p_array->lock);
+    mutex_lock(p_array->_lock);
 
     // No more pointer for end user
     *pp_array = (array *) 0;
 
     // Unlock
-    unlock_mutex(&p_array->lock);
+    mutex_unlock(&p_array->_lock);
 
     // Free the array contents
     if ( ARRAY_REALLOC(p_array->elements, 0) )
         goto failed_to_free;
 
     // Destroy the mutex
-    destroy_mutex(&p_array->lock);
+    mutex_destroy(&p_array->_lock);
 
     // Free the array
     if ( ARRAY_REALLOC(p_array, 0) )

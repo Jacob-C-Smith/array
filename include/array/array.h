@@ -15,6 +15,9 @@
 #include <stdbool.h>
 #include <string.h>
 
+// sync submodule
+#include <sync/sync.h>
+
 // Debug mode
 #undef NDEBUG
 
