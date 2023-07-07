@@ -22,18 +22,15 @@ int array_create ( array **pp_array )
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( pp_array == (void *) 0 ) goto no_array;
-        #endif
-    }
+    #ifndef NDEBUG
+        if ( pp_array == (void *) 0 ) goto no_array;
+    #endif
 
     // Allocate memory for an array
     array *p_array = ARRAY_REALLOC(0, sizeof(array));
 
     // Error checking
-    if ( p_array == (void *) 0 )
-        goto no_mem;
+    if ( p_array == (void *) 0 ) goto no_mem;
 
     // Zero set
     memset(p_array, 0, sizeof(array));
@@ -75,19 +72,16 @@ int array_construct ( array **pp_array, size_t size )
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( pp_array == (void *) 0 ) goto no_array;
-            if ( size     == 0          ) goto zero_size;
-        #endif
-    }
+    #ifndef NDEBUG
+        if ( pp_array == (void *) 0 ) goto no_array;
+        if ( size     == 0          ) goto zero_size;
+    #endif
 
     // Initialized data
     array *p_array = 0;
 
     // Allocate am array
-    if ( array_create(pp_array) == 0 )
-        goto failed_to_create_array;
+    if ( array_create(pp_array) == 0 ) goto failed_to_create_array;
     
     // Get a pointer to the allocated array
     p_array = *pp_array;
@@ -99,12 +93,10 @@ int array_construct ( array **pp_array, size_t size )
     p_array->elements = ARRAY_REALLOC(0, size * sizeof(void *));
 
     // Create a mutex
-    if ( mutex_create(&p_array->_lock) == 0 )
-        goto failed_to_create_mutex;
+    if ( mutex_create(&p_array->_lock) == 0 ) goto failed_to_create_mutex;
 
     // Error checking
-    if ( p_array->elements == (void *) 0 )
-        goto no_mem;
+    if ( p_array->elements == (void *) 0 ) goto no_mem;
 
     // Success
     return 1;
@@ -168,12 +160,10 @@ int array_from_elements ( array **pp_array, void **elements )
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( pp_array == (void *) 0 ) goto no_array;
-            if ( elements == (void *) 0 ) goto no_elements;
-        #endif
-    }
+    #ifndef NDEBUG
+        if ( pp_array == (void *) 0 ) goto no_array;
+        if ( elements == (void *) 0 ) goto no_elements;
+    #endif
 
     // Initialized data
     array  *p_array       = 0;
@@ -183,10 +173,7 @@ int array_from_elements ( array **pp_array, void **elements )
     while( elements[++element_count] );
 
     // Allocate an array
-    if ( array_construct(&p_array, element_count) == 0 )
-
-        // Allocation failed
-        return 0;
+    if ( array_construct(&p_array, element_count) == 0 ) goto failed_to_allocate_array;        
 
     // Iterate over each key
     for (size_t i = 0; elements[i]; i++)
@@ -220,7 +207,17 @@ int array_from_elements ( array **pp_array, void **elements )
 
                 // Error 
                 return 0;
+        }
 
+        // Array errors
+        {
+            failed_to_allocate_array:
+                #ifndef NDEBUG
+                    printf("[array] Call to \"array_construct\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
         }
     }
 }
@@ -229,16 +226,15 @@ int array_index ( array *p_array, signed index, void **pp_value )
 {
 
     // Argument errors
-    {
-        #ifndef NDEBUG
-            if ( p_array == (void *) 0 ) goto no_array;
-            if ( pp_value == (void *) 0 ) goto no_value;
-        #endif
-    }
+    #ifndef NDEBUG
+        if ( p_array  == (void *) 0 ) goto no_array;
+        if ( pp_value == (void *) 0 ) goto no_value;
+    #endif
 
     // Positive index
     if ( index <= 0 )
         *pp_value = p_array->elements[index];
+
     // Negative numbers
     else 
         *pp_value = p_array->elements[p_array->element_count - ( index * -1 )];
@@ -271,7 +267,6 @@ int array_index ( array *p_array, signed index, void **pp_value )
 
             // Error handling
             return 0;
-
     }
 }
 
@@ -279,20 +274,19 @@ int array_get ( array *p_array, void **pp_elements, size_t *p_count )
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( p_array == (void *) 0 ) goto no_array;
-        #endif
-    }
+    #ifndef NDEBUG
+        if ( p_array == (void *) 0 ) goto no_array;
+    #endif
 
     // Lock
     mutex_lock(p_array->_lock);
 
-    // Return
-    if (pp_elements)
+    // Return the elements
+    if ( pp_elements )
         memcpy(pp_elements, p_array->elements, sizeof(void *)*p_array->element_count);
     
-    if (p_count)
+    // Return the count
+    if ( p_count )
         *p_count = p_array->element_count;
 
     // Unlock
@@ -321,11 +315,9 @@ bool array_is_empty ( array *p_array )
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( p_array == (void *) 0 ) goto no_array;
-        #endif
-    }
+    #ifndef NDEBUG
+        if ( p_array == (void *) 0 ) goto no_array;
+    #endif
 
     // Success
     return ( p_array->element_count == 0 );
@@ -350,11 +342,9 @@ size_t array_size ( array *p_array )
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( p_array == (void *) 0 ) goto no_array;
-        #endif
-    }
+    #ifndef NDEBUG
+        if ( p_array == (void *) 0 ) goto no_array;
+    #endif
 
     // Success
     return p_array->element_count;
@@ -379,11 +369,9 @@ int array_add ( array *p_array, void *p_element )
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( p_array == (void *) 0 ) goto no_array;
-        #endif
-    }
+    #ifndef NDEBUG
+        if ( p_array == (void *) 0 ) goto no_array;
+    #endif
 
     // Lock
     mutex_lock(p_array->_lock);
@@ -405,8 +393,7 @@ int array_add ( array *p_array, void *p_element )
         p_array->elements = ARRAY_REALLOC(p_array->elements, p_array->iterable_max * sizeof(void *));
     
         // Error checking
-        if ( p_array->elements == (void *) 0 )
-            goto no_mem;
+        if ( p_array->elements == (void *) 0 ) goto no_mem;
     }
 
     // Unlock
@@ -449,11 +436,9 @@ int array_clear ( array *p_array )
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( p_array == (void *) 0 ) goto no_array;
-        #endif
-    }
+    #ifndef NDEBUG
+        if ( p_array == (void *) 0 ) goto no_array;
+    #endif
 
     // Lock
     mutex_lock(p_array->_lock);
@@ -491,12 +476,10 @@ int array_free_clear ( array *p_array, void (*free_fun_ptr)(void *) )
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( p_array      == (void *) 0 ) goto no_array;
-            if ( free_fun_ptr == (void *) 0 ) goto no_free_func;
-        #endif
-    }
+    #ifndef NDEBUG
+        if ( p_array      == (void *) 0 ) goto no_array;
+        if ( free_fun_ptr == (void *) 0 ) goto no_free_func;
+    #endif
 
     // Iterate over each element in the array
     for (size_t i = 0; i < p_array->element_count; i++)
@@ -543,10 +526,10 @@ int array_foreach ( array *p_array, void (*function)(void *) )
 {
 
     // Argument check
-    {
+    #ifndef NDEBUG
         if ( p_array  == (void *) 0 ) goto no_array;
         if ( function == (void *) 0 ) goto no_free_func;
-    }
+    #endif
 
     // Iterate over each element in the array
     for (size_t i = 0; i < p_array->element_count; i++)
@@ -585,10 +568,9 @@ int array_destroy ( array  **pp_array )
 {
 
     // Argument check
-    {
-        if ( pp_array == (void *) 0 )
-            goto no_array;
-    }
+    #ifndef NDEBUG
+        if ( pp_array == (void *) 0 ) goto no_array;
+    #endif
 
     // Initialized data
     array *p_array = *pp_array;
@@ -603,15 +585,13 @@ int array_destroy ( array  **pp_array )
     mutex_unlock(p_array->_lock);
 
     // Free the array contents
-    if ( ARRAY_REALLOC(p_array->elements, 0) )
-        goto failed_to_free;
+    if ( ARRAY_REALLOC(p_array->elements, 0) ) goto failed_to_free;
 
     // Destroy the mutex
     mutex_destroy(&p_array->_lock);
 
     // Free the array
-    if ( ARRAY_REALLOC(p_array, 0) )
-        goto failed_to_free;
+    if ( ARRAY_REALLOC(p_array, 0) ) goto failed_to_free;
     
     // Success
     return 1;
@@ -639,7 +619,6 @@ int array_destroy ( array  **pp_array )
 
                 // Error
                 return 0;
-
         }
     }
 }
