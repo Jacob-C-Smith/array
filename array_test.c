@@ -46,6 +46,7 @@ int total_tests      = 0,
 
 
 // Forward declarations
+int print_time_pretty        ( double seconds );
 int run_tests                ();
 int print_final_summary      ();
 int print_test               ( const char  *scenario_name, const char    *test_name, bool passed );
