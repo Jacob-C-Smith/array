@@ -91,6 +91,9 @@ DLLEXPORT int array_from_elements ( array **pp_array, void **elements );
  * @param index signed index. 
  * @param pp_value return
  * 
+ * @sa array_get
+ * @sa array_slice
+ * 
  * @return 1 on success, 0 on error 
  */
 DLLEXPORT int array_index ( array *p_array, signed index, void **pp_value );
@@ -101,11 +104,27 @@ DLLEXPORT int array_index ( array *p_array, signed index, void **pp_value );
  * @param p_array array
  * @param pp_elements return
  *
- * @sa array_values
+ * @sa array_index
+ * @sa array_slice
  *
- * @return pointer to specified property's value on success, null pointer on error
+ * @return  1 on success, 0 on error 
  */
 DLLEXPORT int array_get ( array *p_array, void **pp_elements, size_t *p_count );
+
+/** !
+ * Get a slice of the array specified by a lower bound and an upper bound
+ * 
+ * @param p_array array
+ * @param pp_elements return
+ * @param lower_bound the lower bound of the array
+ * @param upper_bound the upper bound of the array
+ * 
+ * @sa array_index
+ * @sa array_get
+ * 
+ * @return 1 on success, 0 on error 
+*/
+DLLEXPORT int array_slice ( array *p_array, void **pp_elements, signed lower_bound, signed upper_bound );
 
 /** !
  *  Is an array empty?

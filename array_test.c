@@ -178,8 +178,6 @@ int run_tests ( )
     // [A] -> add(C) -> [A, B, C]
     test_three_element_array(construct_AB_addC_ABC, "AB_addC_ABC", (void **)ABC_elements);
 
-
-
     // [A, B, C] -> 
 
     // [A, B, C] -> clear() -> []
@@ -305,6 +303,88 @@ bool test_get_count ( int(*array_constructor)(array **pp_array), size_t expected
     return (result == expected);
 }
 
+bool test_size ( int(*array_constructor)(array **pp_array), size_t expected_size, result_t expected )
+{
+    // Initialized data
+    result_t  result       = 0;
+    array    *p_array      = 0;
+
+    // Build the array
+    array_constructor(&p_array);
+
+    // Get the size of the array
+
+    if ( array_size(p_array) == expected_size )
+        result = match;
+    else
+        result = zero;
+
+    // Free the array
+    array_destroy(&p_array);
+
+    // Return result
+    return (result == expected);
+}
+
+bool test_index ( int(*array_constructor)(array **pp_array), signed idx, void *expected_value, result_t expected )
+{
+    // Initialized data
+    result_t  result       = 0;
+    array    *p_array      = 0;
+    void     *result_value = 0;
+
+    // Build the array
+    array_constructor(&p_array);
+
+    // Index the array
+    result = array_index(p_array, idx, &result_value);
+    
+    if ( result == 1 )
+        if ( result_value == expected_value )
+            result = match;
+
+    // Free the array
+    array_destroy(&p_array);
+
+    // Return result
+    return (result == expected);
+}
+
+bool test_slice ( int(*array_constructor)(array **pp_array), signed lower, signed upper, void **expected_value, result_t expected )
+{
+    // Initialized data
+    result_t  result       = 0;
+    array    *p_array      = 0;
+    void     *result_values[] = { 0, 0, 0, 0, (void *) 0 };
+
+    // Build the array
+    array_constructor(&p_array);
+
+    // Index the array
+    result = array_slice(p_array, &result_values, lower, upper);
+    
+    // Error check
+    if ( result == zero )
+        goto done;
+
+    result = match;
+
+        for (size_t i = 0; i < upper-lower; i++)
+        {
+            if ( result_values[i] != expected_value[i] )
+                result = zero;
+        }
+        
+
+    done:
+    // Free the array
+    array_destroy(&p_array);
+
+    // Return result
+    return (result == expected);
+}
+
+
 int construct_empty ( array **pp_array )
 {
     // Construct an array
@@ -421,9 +501,8 @@ int test_empty_array ( int (*array_constructor)(array **pp_array), char *name)
 
     print_test(name, "array_add_A"    , test_add(array_constructor, A_element, one) );
     print_test(name, "array_add_B"    , test_add(array_constructor, B_element, one) );
-    //print_test(name, "array_index0"   , test_index(array_constructor, (void *)0, zero) );
-    //print_test(name, "array_index-1"  , test_index(array_constructor, (void *)0, zero) );
-    //print_test(name, "array_index1"   , test_index(array_constructor, (void *)0, zero) );
+    print_test(name, "array_index0"   , test_index(array_constructor, 0, (void *)0, zero) );
+    print_test(name, "array_index1"   , test_index(array_constructor, 1, (void *)0, zero) );
     print_test(name, "array_get"      , test_get(array_constructor, (void **)_elements, zero) );    
     print_test(name, "array_get_count", test_get_count(array_constructor, 0, match) );
 
@@ -438,10 +517,9 @@ int test_one_element_array ( int (*array_constructor)(array **pp_array), char *n
 
     print_test(name, "array_add_D"    , test_add(array_constructor, D_element, one) );
     print_test(name, "array_get"      , test_get(array_constructor, values, zero) );
-    //print_test(name, "array_size"     , test_array_size(array_construct, 2, match));
-    //print_test(name, "array_index0"   , test_index(array_constructor, A_element, one) );
-    //print_test(name, "array_index-1"  , test_index(array_constructor, (void *)0, zero) );
-    //print_test(name, "array_index1"   , test_index(array_constructor, (void *)0, zero) );
+    print_test(name, "array_size"     , test_size(array_constructor, 1, match));
+    print_test(name, "array_index0"   , test_index(array_constructor, 0, values[0], match) );
+    print_test(name, "array_index1"   , test_index(array_constructor, 1, (void *)0, zero) );
     print_test(name, "array_get"      , test_get(array_constructor, values, zero) );    
     print_test(name, "array_get_count", test_get_count(array_constructor, 1, match) );
     
@@ -456,12 +534,10 @@ int test_two_element_array ( int (*array_constructor)(array **pp_array), char *n
 
     print_test(name, "array_add_D"    , test_add(array_constructor, D_element, one) );
     print_test(name, "array_get"      , test_get(array_constructor, values, zero) );
-    //print_test(name, "array_size"     , test_array_size(array_construct, 2, match));
-    //print_test(name, "array_index0"   , test_index(array_constructor, A_element, one) );
-    //print_test(name, "array_index-1"  , test_index(array_constructor, (void *)0, one) );
-    //print_test(name, "array_index1"   , test_index(array_constructor, (void *)0, one) );  
-    //print_test(name, "array_index-2"  , test_index(array_constructor, (void *)0, zero) );
-    //print_test(name, "array_index2"   , test_index(array_constructor, (void *)0, zero) );  
+    print_test(name, "array_size"     , test_size(array_constructor, 2, match));
+    print_test(name, "array_index0"   , test_index(array_constructor, 0, values[0], match) );
+    print_test(name, "array_index1"   , test_index(array_constructor, 1, values[1], match) );  
+    print_test(name, "array_index2"   , test_index(array_constructor, 2, (void *)0, zero) );  
     print_test(name, "array_get_count", test_get_count(array_constructor, 2, match) );
     
     print_final_summary();
@@ -475,15 +551,11 @@ int test_three_element_array ( int (*array_constructor)(array **pp_array), char 
 
     print_test(name, "array_add_D"    , test_add(array_constructor, D_element, one) );
     print_test(name, "array_get"      , test_get(array_constructor, values, zero) );
-    //print_test(name, "array_size"     , test_array_size(array_construct, 3, match));
-    //print_test(name, "array_index0"   , test_index(array_constructor, values[0], one) );
-    //print_test(name, "array_index-1"  , test_index(array_constructor, values[2], one) );
-    //print_test(name, "array_index1"   , test_index(array_constructor, values[1], one) );  
-    //print_test(name, "array_index-2"  , test_index(array_constructor, values[1], one) );
-    //print_test(name, "array_index2"   , test_index(array_constructor, values[2], one) );  
-    //print_test(name, "array_index-3"  , test_index(array_constructor, values[0], one) );
-    //print_test(name, "array_index3"   , test_index(array_constructor, (void *)0, zero) );  
-    //print_test(name, "array_index-4"  , test_index(array_constructor, (void *)0, zero) );  
+    print_test(name, "array_size"     , test_size(array_constructor, 3, match));
+    print_test(name, "array_index0"   , test_index(array_constructor, 0, values[0], match) );
+    print_test(name, "array_index1"   , test_index(array_constructor, 1, values[1], match) );  
+    print_test(name, "array_index2"   , test_index(array_constructor, 2, values[2], match) );  
+    print_test(name, "array_index3"   , test_index(array_constructor, 3, (void *)0, zero) );  
     print_test(name, "array_get_count", test_get_count(array_constructor, 3, match) );
     
     print_final_summary();

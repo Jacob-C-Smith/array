@@ -227,12 +227,16 @@ int array_index ( array *p_array, signed index, void **pp_value )
 
     // Argument errors
     #ifndef NDEBUG
-        if ( p_array  == (void *) 0 ) goto no_array;
-        if ( pp_value == (void *) 0 ) goto no_value;
+        if ( p_array                == (void *) 0 ) goto no_array;
+        if ( p_array->element_count ==          0 ) goto no_elements;
+        if ( pp_value               == (void *) 0 ) goto no_value;
     #endif
 
+    // Error check
+    if ( p_array->element_count == abs(index) ) goto bounds_error;
+
     // Positive index
-    if ( index <= 0 )
+    if ( index >= 0 )
         *pp_value = p_array->elements[index];
 
     // Negative numbers
@@ -249,7 +253,7 @@ int array_index ( array *p_array, signed index, void **pp_value )
                 printf("[array] Null pointer provided for parameter \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
             #endif
 
-            // Error handling
+            // Error
             return 0;
 
         out_of_bounds:
@@ -257,7 +261,7 @@ int array_index ( array *p_array, signed index, void **pp_value )
                 printf("[array] Index out of bounds in call to function \"%s\"\n", __FUNCTION__);
             #endif
 
-            // Error handling
+            // Error 
             return 0;
 
         no_value:
@@ -265,7 +269,23 @@ int array_index ( array *p_array, signed index, void **pp_value )
                 printf("[array] Null pointer provided for parameter \"pp_vale\" in call to function \"%s\"\n", __FUNCTION__);
             #endif
 
-            // Error handling
+            // Error
+            return 0;
+
+        no_elements:
+            #ifndef NDEBUG
+                printf("[array] Can not index an empty array in call to function \"%s\"\n", __FUNCTION__);
+            #endif
+
+            // Error 
+            return 0;
+        
+        bounds_error:
+            #ifndef NDEBUG
+                printf("[array] Index out of bounds in call to function \"%s\"\n", __FUNCTION__);
+            #endif
+
+            // Error
             return 0;
     }
 }
@@ -303,6 +323,61 @@ int array_get ( array *p_array, void **pp_elements, size_t *p_count )
             no_array:
                 #ifndef NDEBUG
                     printf("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error 
+                return 0;
+        }
+    }
+}
+
+int array_slice ( array *p_array, void **pp_elements, signed lower_bound, signed upper_bound )
+{
+
+    // Argument check
+    #ifndef NDEBUG
+        if ( p_array == (void *) 0 ) goto no_array;
+        if ( lower_bound < 0 ) goto erroneous_lower_bound;
+        if ( p_array->element_count < upper_bound ) goto erroneous_upper_bound;
+    #endif
+
+    // Lock
+    mutex_lock(p_array->_lock);
+
+    // Return the elements
+    if ( pp_elements )
+        memcpy(pp_elements, &p_array->elements[lower_bound], sizeof(void *) * ( upper_bound - lower_bound + 1 ) );
+    
+    // Unlock
+    mutex_unlock(p_array->_lock);
+
+    // Success
+    return 1;
+
+    // Error handling
+    {
+
+        // Argument errors
+        {
+            no_array:
+                #ifndef NDEBUG
+                    printf("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error 
+                return 0;
+
+            erroneous_lower_bound:
+                #ifndef NDEBUG
+                    printf("[array] Parameter \"lower_bound\" must be greater than zero in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error 
+                return 0;
+                
+            erroneous_upper_bound:
+                #ifndef NDEBUG
+                    printf("[array] Parameter \"upper_bound\" must be less than or equal to array size in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
