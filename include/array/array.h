@@ -52,7 +52,7 @@ typedef struct array_s array;
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int array_create ( array **pp_array );
+DLLEXPORT int array_create ( const array **pp_array );
 
 // Constructors
 /** !
@@ -66,7 +66,7 @@ DLLEXPORT int array_create ( array **pp_array );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int array_construct ( array **pp_array, size_t size );
+DLLEXPORT int array_construct ( const array **pp_array, size_t size );
 
 /** !
  *  Construct an array from an array of elements
@@ -80,7 +80,7 @@ DLLEXPORT int array_construct ( array **pp_array, size_t size );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int array_from_elements ( array **pp_array, void **elements );
+DLLEXPORT int array_from_elements ( const array **pp_array, void **elements );
 
 // Accessors
 /** !
@@ -96,7 +96,7 @@ DLLEXPORT int array_from_elements ( array **pp_array, void **elements );
  * 
  * @return 1 on success, 0 on error 
  */
-DLLEXPORT int array_index ( array *p_array, signed index, void **pp_value );
+DLLEXPORT int array_index ( const array *p_array, signed index, void **pp_value );
 
 /** !
  *  Get an array of elements
@@ -109,7 +109,7 @@ DLLEXPORT int array_index ( array *p_array, signed index, void **pp_value );
  *
  * @return  1 on success, 0 on error 
  */
-DLLEXPORT int array_get ( array *p_array, void **pp_elements, size_t *p_count );
+DLLEXPORT int array_get ( const array *p_array, void **pp_elements, size_t *p_count );
 
 /** !
  * Get a slice of the array specified by a lower bound and an upper bound
@@ -124,7 +124,7 @@ DLLEXPORT int array_get ( array *p_array, void **pp_elements, size_t *p_count );
  * 
  * @return 1 on success, 0 on error 
 */
-DLLEXPORT int array_slice ( array *p_array, void **pp_elements, signed lower_bound, signed upper_bound );
+DLLEXPORT int array_slice ( const array *p_array, void **pp_elements, signed lower_bound, signed upper_bound );
 
 /** !
  *  Is an array empty?
@@ -133,7 +133,7 @@ DLLEXPORT int array_slice ( array *p_array, void **pp_elements, signed lower_bou
  * 
  * @return true if array has no contents else false
  */
-DLLEXPORT bool array_is_empty ( array *p_array );
+DLLEXPORT bool array_is_empty ( const array *p_array );
 
 /** !
  *  Get the size of an array
@@ -142,7 +142,7 @@ DLLEXPORT bool array_is_empty ( array *p_array );
  * 
  * @return size of array
  */
-DLLEXPORT size_t array_size ( array *p_array );
+DLLEXPORT size_t array_size ( const array *p_array );
 
 // Mutators
 /** !
@@ -185,7 +185,7 @@ DLLEXPORT int array_free_clear ( array *p_array, void (*free_fun_ptr)(void *) );
  * 
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int array_foreach_i ( array *p_array, void (*function)(void *value, size_t index) );
+DLLEXPORT int array_foreach_i ( const array *p_array, void (*function)(void *value, size_t index) );
 
 // Destructors
 /** !
@@ -197,4 +197,4 @@ DLLEXPORT int array_foreach_i ( array *p_array, void (*function)(void *value, si
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int array_destroy ( array **pp_array );
+DLLEXPORT int array_destroy ( const array **pp_array );

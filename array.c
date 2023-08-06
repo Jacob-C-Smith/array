@@ -12,13 +12,13 @@
 // Structure definitions
 struct array_s
 {
-    size_t    element_count, // Elements
-              iterable_max;  // Iterable array bound
+    size_t    element_count, // Integer quantity of elements
+              iterable_max;  // Upper bound of iterable array 
     mutex     _lock;         // Locked when writing values
-    void    **elements;      // Iterable elements
+    void    **elements;      // Array contents
 };
 
-int array_create ( array **pp_array )
+int array_create ( const array **pp_array )
 {
 
     // Argument check
@@ -68,7 +68,7 @@ int array_create ( array **pp_array )
     }
 }
 
-int array_construct ( array **pp_array, size_t size )
+int array_construct ( const array **pp_array, size_t size )
 {
 
     // Argument check
@@ -80,7 +80,7 @@ int array_construct ( array **pp_array, size_t size )
     // Initialized data
     array *p_array = 0;
 
-    // Allocate am array
+    // Allocate an array
     if ( array_create(pp_array) == 0 ) goto failed_to_create_array;
     
     // Get a pointer to the allocated array
@@ -156,7 +156,7 @@ int array_construct ( array **pp_array, size_t size )
     }
 }
 
-int array_from_elements ( array **pp_array, void **elements )
+int array_from_elements ( const array **pp_array, void **elements )
 {
 
     // Argument check
@@ -222,7 +222,7 @@ int array_from_elements ( array **pp_array, void **elements )
     }
 }
 
-int array_index ( array *p_array, signed index, void **pp_value )
+int array_index ( const array *p_array, signed index, void **pp_value )
 {
 
     // Argument errors
@@ -290,7 +290,7 @@ int array_index ( array *p_array, signed index, void **pp_value )
     }
 }
 
-int array_get ( array *p_array, void **pp_elements, size_t *p_count )
+int array_get ( const array *p_array, void **pp_elements, size_t *p_count )
 {
 
     // Argument check
@@ -331,7 +331,7 @@ int array_get ( array *p_array, void **pp_elements, size_t *p_count )
     }
 }
 
-int array_slice ( array *p_array, void **pp_elements, signed lower_bound, signed upper_bound )
+int array_slice ( const array *p_array, void **pp_elements, signed lower_bound, signed upper_bound )
 {
 
     // Argument check
@@ -386,7 +386,7 @@ int array_slice ( array *p_array, void **pp_elements, signed lower_bound, signed
     }
 }
 
-bool array_is_empty ( array *p_array )
+bool array_is_empty ( const array *p_array )
 {
 
     // Argument check
@@ -413,7 +413,7 @@ bool array_is_empty ( array *p_array )
     }
 }
 
-size_t array_size ( array *p_array )
+size_t array_size ( const array *p_array )
 {
 
     // Argument check
@@ -597,7 +597,7 @@ int array_free_clear ( array *p_array, void (*free_fun_ptr)(void *) )
     }
 }
 
-int array_foreach ( array *p_array, void (*function)(void *) )
+int array_foreach ( const array *p_array, void (*function)(void *) )
 {
 
     // Argument check
@@ -639,7 +639,7 @@ int array_foreach ( array *p_array, void (*function)(void *) )
     }
 }
 
-int array_destroy ( array  **pp_array )
+int array_destroy ( const array **pp_array )
 {
 
     // Argument check
