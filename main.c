@@ -28,7 +28,7 @@ int main ( int argc, const char* argv[] )
     // Print the arrays' keys
     print_all_elements(p_array);
 
-    array_slice(p_array, &slice_of_array, -1, 1);
+    array_slice(p_array, &slice_of_array, 1, 2);
 
     printf("%s\n",slice_of_array[0]);
     printf("%s\n",slice_of_array[1]);
