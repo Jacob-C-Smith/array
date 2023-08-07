@@ -18,7 +18,7 @@ struct array_s
     void    **elements;      // Array contents
 };
 
-int array_create ( const array **pp_array )
+int array_create ( const array **const pp_array )
 {
 
     // Argument check
@@ -68,7 +68,7 @@ int array_create ( const array **pp_array )
     }
 }
 
-int array_construct ( const array **pp_array, size_t size )
+int array_construct ( array **const pp_array, size_t size )
 {
 
     // Argument check
@@ -156,7 +156,7 @@ int array_construct ( const array **pp_array, size_t size )
     }
 }
 
-int array_from_elements ( const array **pp_array, void **elements )
+int array_from_elements ( const array **const pp_array, void *const *const elements )
 {
 
     // Argument check
@@ -222,7 +222,7 @@ int array_from_elements ( const array **pp_array, void **elements )
     }
 }
 
-int array_index ( const array *p_array, signed index, void **pp_value )
+int array_index ( const array *const p_array, signed index, void **const pp_value )
 {
 
     // Argument errors
@@ -290,7 +290,7 @@ int array_index ( const array *p_array, signed index, void **pp_value )
     }
 }
 
-int array_get ( const array *p_array, void **pp_elements, size_t *p_count )
+int array_get ( const array *const p_array, const void **const pp_elements, size_t *const p_count )
 {
 
     // Argument check
@@ -331,7 +331,7 @@ int array_get ( const array *p_array, void **pp_elements, size_t *p_count )
     }
 }
 
-int array_slice ( const array *p_array, void **pp_elements, signed lower_bound, signed upper_bound )
+int array_slice ( const array *const p_array, void **const pp_elements, signed lower_bound, signed upper_bound )
 {
 
     // Argument check
@@ -386,7 +386,7 @@ int array_slice ( const array *p_array, void **pp_elements, signed lower_bound, 
     }
 }
 
-bool array_is_empty ( const array *p_array )
+bool array_is_empty ( const array *const p_array )
 {
 
     // Argument check
@@ -413,7 +413,7 @@ bool array_is_empty ( const array *p_array )
     }
 }
 
-size_t array_size ( const array *p_array )
+size_t array_size ( const array *const p_array )
 {
 
     // Argument check
@@ -440,7 +440,7 @@ size_t array_size ( const array *p_array )
     }
 }
 
-int array_add ( array *p_array, void *p_element )
+int array_add ( array *const p_array, void *const p_element )
 {
 
     // Argument check
@@ -507,7 +507,7 @@ int array_add ( array *p_array, void *p_element )
     }
 }
 
-int array_clear ( array *p_array )
+int array_clear ( array *const p_array )
 {
 
     // Argument check
@@ -547,7 +547,7 @@ int array_clear ( array *p_array )
     }
 }
 
-int array_free_clear ( array *p_array, void (*free_fun_ptr)(void *) )
+int array_free_clear ( array *const p_array, void (*const free_fun_ptr)(void *) )
 {
 
     // Argument check
@@ -597,7 +597,7 @@ int array_free_clear ( array *p_array, void (*free_fun_ptr)(void *) )
     }
 }
 
-int array_foreach ( const array *p_array, void (*function)(void *) )
+int array_foreach ( const array *const p_array, void (*const function)(void *const value, size_t index) )
 {
 
     // Argument check
@@ -610,7 +610,7 @@ int array_foreach ( const array *p_array, void (*function)(void *) )
     for (size_t i = 0; i < p_array->element_count; i++)
         
         // Call the free function
-        function(p_array->elements[i]);
+        function(p_array->elements[i], i);
 
     // Success
     return 1;
@@ -639,7 +639,7 @@ int array_foreach ( const array *p_array, void (*function)(void *) )
     }
 }
 
-int array_destroy ( const array **pp_array )
+int array_destroy ( array **const pp_array )
 {
 
     // Argument check
