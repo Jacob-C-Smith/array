@@ -331,7 +331,7 @@ int array_get ( const array *const p_array, const void **const pp_elements, size
     }
 }
 
-int array_slice ( const array *const p_array, void **const pp_elements, signed lower_bound, signed upper_bound )
+int array_slice ( const array *const p_array, const void **const pp_elements, signed lower_bound, signed upper_bound )
 {
 
     // Argument check

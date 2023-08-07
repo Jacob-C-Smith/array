@@ -109,7 +109,7 @@ DLLEXPORT int array_index ( const array *const p_array, signed index, void **con
  *
  * @return  1 on success, 0 on error 
  */
-DLLEXPORT int array_get ( const array * const p_array, void ** const pp_elements, size_t *const p_count );
+DLLEXPORT int array_get ( const array * const p_array, const void ** const pp_elements, size_t *const p_count );
 
 /** !
  * Get a slice of the array specified by a lower bound and an upper bound
@@ -124,7 +124,7 @@ DLLEXPORT int array_get ( const array * const p_array, void ** const pp_elements
  * 
  * @return 1 on success, 0 on error 
 */
-DLLEXPORT int array_slice ( const array *const p_array, void * const* const pp_elements, signed lower_bound, signed upper_bound );
+DLLEXPORT int array_slice ( const array *const p_array, const void ** const pp_elements, signed lower_bound, signed upper_bound );
 
 /** !
  *  Is an array empty?
