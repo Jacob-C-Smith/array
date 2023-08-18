@@ -59,6 +59,28 @@
  ```
  ### Function definitions
  ```c 
- // TODO
- ```
+// Allocators
+int array_create ( array **const pp_array );
 
+// Constructors
+int array_construct     ( array **const pp_array, size_t size );
+int array_from_elements ( array **const pp_array, void *const *const elements );
+
+// Accessors
+int    array_index    ( const array *const p_array, signed index, void **const pp_value );
+int    array_get      ( const array *const p_array, const void ** const pp_elements, size_t *const p_count );
+int    array_slice    ( const array *const p_array, const void ** const pp_elements, signed lower_bound, signed upper_bound );
+bool   array_is_empty ( const array *const p_array );
+size_t array_size     ( const array *const p_array );
+
+// Mutators
+int array_add        ( array *const p_array, void *const p_element );
+int array_clear      ( array *const p_array );
+int array_free_clear ( array *const p_array, void (*const free_fun_ptr)(void *) );
+
+// Iterators
+int array_foreach_i  ( const array *const p_array, void (*const function)(void *const value, size_t index) );
+
+// Destructors
+int array_destroy    ( array **const pp_array );
+ ```
