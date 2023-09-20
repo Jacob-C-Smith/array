@@ -22,9 +22,7 @@ int array_create ( const array **const pp_array )
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( pp_array == (void *) 0 ) goto no_array;
-    #endif
+    if ( pp_array == (void *) 0 ) goto no_array;
 
     // Allocate memory for an array
     array *p_array = ARRAY_REALLOC(0, sizeof(array));
@@ -72,10 +70,8 @@ int array_construct ( array **const pp_array, size_t size )
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( pp_array == (void *) 0 ) goto no_array;
-        if ( size     == 0          ) goto zero_size;
-    #endif
+    if ( pp_array == (void *) 0 ) goto no_array;
+    if ( size     == 0          ) goto zero_size;
 
     // Initialized data
     array *p_array = 0;
@@ -160,10 +156,8 @@ int array_from_elements ( const array **const pp_array, void *const *const eleme
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( pp_array == (void *) 0 ) goto no_array;
-        if ( elements == (void *) 0 ) goto no_elements;
-    #endif
+    if ( pp_array == (void *) 0 ) goto no_array;
+    if ( elements == (void *) 0 ) goto no_elements;
 
     // Initialized data
     array  *p_array       = 0;
@@ -294,9 +288,7 @@ int array_get ( const array *const p_array, const void **const pp_elements, size
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( p_array == (void *) 0 ) goto no_array;
-    #endif
+    if ( p_array == (void *) 0 ) goto no_array;
 
     // Lock
     mutex_lock(p_array->_lock);
@@ -335,11 +327,9 @@ int array_slice ( const array *const p_array, const void **const pp_elements, si
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( p_array == (void *) 0 ) goto no_array;
-        if ( lower_bound < 0 ) goto erroneous_lower_bound;
-        if ( p_array->element_count < upper_bound ) goto erroneous_upper_bound;
-    #endif
+    if ( p_array == (void *) 0 ) goto no_array;
+    if ( lower_bound < 0 ) goto erroneous_lower_bound;
+    if ( p_array->element_count < upper_bound ) goto erroneous_upper_bound;
 
     // Lock
     mutex_lock(p_array->_lock);
@@ -390,9 +380,7 @@ bool array_is_empty ( const array *const p_array )
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( p_array == (void *) 0 ) goto no_array;
-    #endif
+    if ( p_array == (void *) 0 ) goto no_array;
 
     // Success
     return ( p_array->element_count == 0 );
@@ -417,9 +405,7 @@ size_t array_size ( const array *const p_array )
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( p_array == (void *) 0 ) goto no_array;
-    #endif
+    if ( p_array == (void *) 0 ) goto no_array;
 
     // Success
     return p_array->element_count;
@@ -444,9 +430,7 @@ int array_add ( array *const p_array, void *const p_element )
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( p_array == (void *) 0 ) goto no_array;
-    #endif
+    if ( p_array == (void *) 0 ) goto no_array;
 
     // Lock
     mutex_lock(p_array->_lock);
@@ -511,9 +495,7 @@ int array_clear ( array *const p_array )
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( p_array == (void *) 0 ) goto no_array;
-    #endif
+    if ( p_array == (void *) 0 ) goto no_array;
 
     // Lock
     mutex_lock(p_array->_lock);
@@ -551,10 +533,8 @@ int array_free_clear ( array *const p_array, void (*const free_fun_ptr)(void *) 
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( p_array      == (void *) 0 ) goto no_array;
-        if ( free_fun_ptr == (void *) 0 ) goto no_free_func;
-    #endif
+    if ( p_array      == (void *) 0 ) goto no_array;
+    if ( free_fun_ptr == (void *) 0 ) goto no_free_func;
 
     // Iterate over each element in the array
     for (size_t i = 0; i < p_array->element_count; i++)
@@ -601,10 +581,8 @@ int array_foreach ( const array *const p_array, void (*const function)(void *con
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( p_array  == (void *) 0 ) goto no_array;
-        if ( function == (void *) 0 ) goto no_free_func;
-    #endif
+    if ( p_array  == (void *) 0 ) goto no_array;
+    if ( function == (void *) 0 ) goto no_free_func;
 
     // Iterate over each element in the array
     for (size_t i = 0; i < p_array->element_count; i++)
@@ -643,9 +621,7 @@ int array_destroy ( array **const pp_array )
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( pp_array == (void *) 0 ) goto no_array;
-    #endif
+    if ( pp_array == (void *) 0 ) goto no_array;
 
     // Initialized data
     array *p_array = *pp_array;
