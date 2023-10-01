@@ -577,7 +577,7 @@ int array_free_clear ( array *const p_array, void (*const free_fun_ptr)(void *) 
     }
 }
 
-int array_foreach ( const array *const p_array, void (*const function)(void *const value, size_t index) )
+int array_foreach_i ( const array *const p_array, void (*const function)(void *const value, size_t index) )
 {
 
     // Argument check
@@ -587,7 +587,7 @@ int array_foreach ( const array *const p_array, void (*const function)(void *con
     // Iterate over each element in the array
     for (size_t i = 0; i < p_array->element_count; i++)
         
-        // Call the free function
+        // Call the function
         function(p_array->elements[i], i);
 
     // Success
