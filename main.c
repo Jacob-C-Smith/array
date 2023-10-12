@@ -12,10 +12,13 @@ int print_all_elements(array* a);
 int main ( int argc, const char* argv[] )
 {
 
+    // Supress compiler warnings
+    (void) argc;
+    (void) argv;
+
     // Initialized data
-    char     *elements[]       = { "Dogs", "Cats", "Birds", "Fish", (void*)0 };
-    array    *p_array          = (void *) 0;
-    char     *slice_of_array[] = { 0, 0, (void *)0 };
+    array *p_array          = (void *) 0;
+    char  *slice_of_array[] = { 0, 0, (void *)0 };
 
     // Make an array with 4 elements
     array_construct(&p_array, 4);
@@ -28,7 +31,7 @@ int main ( int argc, const char* argv[] )
     // Print the arrays' keys
     print_all_elements(p_array);
 
-    array_slice(p_array, &slice_of_array, 1, 2);
+    array_slice(p_array, (void**)slice_of_array, 1, 2);
 
     printf("%s\n",slice_of_array[0]);
     printf("%s\n",slice_of_array[1]);
@@ -59,7 +62,7 @@ int print_all_elements(array* p_array)
     for (size_t i = 0; i < count; i++)
 
         // Print each key
-        printf("[%lld] %s\n", i, (char *)pp_elements[i]);
+        printf("[%zu] %s\n", i, (char *)pp_elements[i]);
     
     // Formatting
     putchar('\n');

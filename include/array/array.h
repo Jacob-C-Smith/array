@@ -52,7 +52,7 @@ typedef struct array_s array;
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int array_create ( const array **const pp_array );
+DLLEXPORT int array_create ( array **const pp_array );
 
 // Constructors
 /** !
@@ -80,7 +80,7 @@ DLLEXPORT int array_construct ( array **const pp_array, size_t size );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int array_from_elements ( const array **const pp_array, void *const *const elements );
+DLLEXPORT int array_from_elements ( array **const pp_array, void *const *const elements );
 
 // Accessors
 /** !
@@ -109,7 +109,7 @@ DLLEXPORT int array_index ( const array *const p_array, signed index, void **con
  *
  * @return  1 on success, 0 on error 
  */
-DLLEXPORT int array_get ( const array * const p_array, const void ** const pp_elements, size_t *const p_count );
+DLLEXPORT int array_get ( const array * const p_array, void ** const pp_elements, size_t *const p_count );
 
 /** !
  * Get a slice of the array specified by a lower bound and an upper bound
@@ -124,7 +124,7 @@ DLLEXPORT int array_get ( const array * const p_array, const void ** const pp_el
  * 
  * @return 1 on success, 0 on error 
 */
-DLLEXPORT int array_slice ( const array *const p_array, const void ** const pp_elements, signed lower_bound, signed upper_bound );
+DLLEXPORT int array_slice ( const array *const p_array, void *pp_elements[], signed lower_bound, signed upper_bound );
 
 /** !
  *  Is an array empty?
