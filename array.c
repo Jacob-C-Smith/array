@@ -18,7 +18,7 @@ struct array_s
     void    **elements;      // Array contents
 };
 
-int array_create ( const array **const pp_array )
+int array_create ( array **const pp_array )
 {
 
     // Argument check
@@ -77,11 +77,8 @@ int array_construct ( array **const pp_array, size_t size )
     array *p_array = 0;
 
     // Allocate an array
-    if ( array_create(pp_array) == 0 ) goto failed_to_create_array;
+    if ( array_create(&p_array) == 0 ) goto failed_to_create_array;
     
-    // Get a pointer to the allocated array
-    p_array = *pp_array;
-
     // Set the count and iterator max
     p_array->iterable_max = 1;
 
@@ -93,6 +90,9 @@ int array_construct ( array **const pp_array, size_t size )
 
     // Error checking
     if ( p_array->elements == (void *) 0 ) goto no_mem;
+
+    // Return a pointer to the caller
+    *pp_array = p_array;
 
     // Success
     return 1;
@@ -152,7 +152,7 @@ int array_construct ( array **const pp_array, size_t size )
     }
 }
 
-int array_from_elements ( const array **const pp_array, void *const *const elements )
+int array_from_elements ( array **const pp_array, void *const *const elements )
 {
 
     // Argument check
@@ -227,7 +227,7 @@ int array_index ( const array *const p_array, signed index, void **const pp_valu
     #endif
 
     // Error check
-    if ( p_array->element_count == abs(index) ) goto bounds_error;
+    if ( p_array->element_count == (size_t) abs(index) ) goto bounds_error;
 
     // Positive index
     if ( index >= 0 )
@@ -235,7 +235,7 @@ int array_index ( const array *const p_array, signed index, void **const pp_valu
 
     // Negative numbers
     else 
-        *pp_value = p_array->elements[p_array->element_count - ( index * -1 )];
+        *pp_value = p_array->elements[p_array->element_count - (size_t) abs(index)];
 
     // Success
     return 1;
@@ -248,14 +248,6 @@ int array_index ( const array *const p_array, signed index, void **const pp_valu
             #endif
 
             // Error
-            return 0;
-
-        out_of_bounds:
-            #ifndef NDEBUG
-                printf("[array] Index out of bounds in call to function \"%s\"\n", __FUNCTION__);
-            #endif
-
-            // Error 
             return 0;
 
         no_value:
@@ -284,7 +276,7 @@ int array_index ( const array *const p_array, signed index, void **const pp_valu
     }
 }
 
-int array_get ( const array *const p_array, const void **const pp_elements, size_t *const p_count )
+int array_get ( const array *const p_array, void **const pp_elements, size_t *const p_count )
 {
 
     // Argument check
@@ -323,20 +315,20 @@ int array_get ( const array *const p_array, const void **const pp_elements, size
     }
 }
 
-int array_slice ( const array *const p_array, const void **const pp_elements, signed lower_bound, signed upper_bound )
+int array_slice ( const array *const p_array, void *pp_elements[], signed lower_bound, signed upper_bound )
 {
 
     // Argument check
     if ( p_array == (void *) 0 ) goto no_array;
     if ( lower_bound < 0 ) goto erroneous_lower_bound;
-    if ( p_array->element_count < upper_bound ) goto erroneous_upper_bound;
+    if ( p_array->element_count < (size_t) upper_bound ) goto erroneous_upper_bound;
 
     // Lock
     mutex_lock(p_array->_lock);
 
     // Return the elements
     if ( pp_elements )
-        memcpy(pp_elements, &p_array->elements[lower_bound], sizeof(void *) * ( upper_bound - lower_bound + 1 ) );
+        memcpy(pp_elements, &p_array->elements[lower_bound], sizeof(void *) * (size_t) ( upper_bound - lower_bound + 1LL ) );
     
     // Unlock
     mutex_unlock(p_array->_lock);
@@ -577,7 +569,7 @@ int array_free_clear ( array *const p_array, void (*const free_fun_ptr)(void *) 
     }
 }
 
-int array_foreach ( const array *const p_array, void (*const function)(void *const value, size_t index) )
+int array_foreach_i ( const array *const p_array, void (*const function)(void *const value, size_t index) )
 {
 
     // Argument check
@@ -587,7 +579,7 @@ int array_foreach ( const array *const p_array, void (*const function)(void *con
     // Iterate over each element in the array
     for (size_t i = 0; i < p_array->element_count; i++)
         
-        // Call the free function
+        // Call the function
         function(p_array->elements[i], i);
 
     // Success

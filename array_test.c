@@ -47,8 +47,8 @@ int total_tests      = 0,
 
 // Forward declarations
 int print_time_pretty        ( double seconds );
-int run_tests                ();
-int print_final_summary      ();
+int run_tests                ( void );
+int print_final_summary      ( void );
 int print_test               ( const char  *scenario_name, const char    *test_name, bool passed );
 
 bool test_add                ( int (*array_constructor)(array **), void  *value          , result_t expected );
@@ -74,6 +74,10 @@ int construct_empty_fromelementsA_A     ( array **pp_array );
 int main ( int argc, const char* argv[] )
 {
     
+    // Supress compiler warnings
+    (void) argc;
+    (void) argv;
+
     // Initialized data
     timestamp t0 = 0,
               t1 = 0;
@@ -137,27 +141,27 @@ int print_time_pretty ( double seconds )
 
     // Print days
     if ( days ) 
-        printf("%d D, ", days);
+        printf("%zu D, ", days);
     
     // Print hours
     if ( hours )
-        printf("%d h, ", hours);
+        printf("%zu h, ", hours);
 
     // Print minutes
     if ( minutes )
-        printf("%d m, ", minutes);
+        printf("%zu m, ", minutes);
 
     // Print seconds
     if ( __seconds )
-        printf("%d s, ", __seconds);
+        printf("%zu s, ", __seconds);
     
     // Print milliseconds
     if ( milliseconds )
-        printf("%d ms, ", milliseconds);
+        printf("%zu ms, ", milliseconds);
     
     // Print microseconds
     if ( microseconds )
-        printf("%d us", microseconds);
+        printf("%zu us", microseconds);
     
     // Success
     return 1;
@@ -245,7 +249,7 @@ bool test_add ( int(*array_constructor)(array **pp_array), void  *value         
     // Build the array
     array_constructor(&p_array);
 
-    result = array_add(p_array, value);
+    result = (result_t) array_add(p_array, value);
 
     // Free the array
     array_destroy(&p_array);
@@ -337,7 +341,7 @@ bool test_index ( int(*array_constructor)(array **pp_array), signed idx, void *e
     array_constructor(&p_array);
 
     // Index the array
-    result = array_index(p_array, idx, &result_value);
+    result = (result_t) array_index(p_array, idx, &result_value);
     
     if ( result == 1 )
         if ( result_value == expected_value )
@@ -353,15 +357,15 @@ bool test_index ( int(*array_constructor)(array **pp_array), signed idx, void *e
 bool test_slice ( int(*array_constructor)(array **pp_array), signed lower, signed upper, void **expected_value, result_t expected )
 {
     // Initialized data
-    result_t  result       = 0;
-    array    *p_array      = 0;
+    result_t  result          = 0;
+    array    *p_array         = 0;
     void     *result_values[] = { 0, 0, 0, 0, (void *) 0 };
 
     // Build the array
     array_constructor(&p_array);
 
     // Index the array
-    result = array_slice(p_array, &result_values, lower, upper);
+    result = (result_t) array_slice(p_array, result_values, lower, upper);
     
     // Error check
     if ( result == zero )
@@ -369,7 +373,7 @@ bool test_slice ( int(*array_constructor)(array **pp_array), signed lower, signe
 
     result = match;
 
-        for (size_t i = 0; i < upper-lower; i++)
+        for (signed i = 0; i < upper-lower; i++)
         {
             if ( result_values[i] != expected_value[i] )
                 result = zero;
