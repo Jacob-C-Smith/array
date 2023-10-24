@@ -102,7 +102,7 @@ DLLEXPORT int array_from_arguments ( array **const pp_array, size_t size, size_t
  * [A,B,C,D,E] index(-2) -> D
  * 
  * @param p_array array
- * @param index signed index. 
+ * @param index signed index
  * @param pp_value return
  * 
  * @sa array_get
@@ -160,7 +160,7 @@ DLLEXPORT size_t array_size ( const array *const p_array );
 
 // Mutators
 /** !
- *  Add an element to an array. 
+ *  Add an element to the end of an array. 
  *
  * @param p_array array
  * @param p_element the value of the element
@@ -168,6 +168,18 @@ DLLEXPORT size_t array_size ( const array *const p_array );
  * @return 1 on success, 0 on error
  */
 DLLEXPORT int array_add ( array *const p_array, void *const p_element );
+
+/** !
+ *  Remove an element from an array. If index is negative,
+ *  index = size - |index|, such that [A,B,C,D,E] remove(-2) -> D
+ *
+ * @param p_array  the array
+ * @param index    signed index
+ * @param pp_value return
+ *
+ * @return 1 on success, 0 on error
+ */
+DLLEXPORT int array_remove ( array *const p_array, signed index, void **const pp_value );
 
 /** !
  *  Clear all elements in an array

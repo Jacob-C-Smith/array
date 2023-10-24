@@ -495,7 +495,7 @@ int array_add ( array *const p_array, void *const p_element )
     p_array->element_count++;
 
     // Resize iterable max?
-    if ( p_array->element_count >= p_array->iterable_max)
+    if ( p_array->element_count >= p_array->iterable_max )
     {
     
         // Double the size
@@ -528,6 +528,102 @@ int array_add ( array *const p_array, void *const p_element )
                 return 0;
         }
 
+        // Standard library errors
+        {
+            no_mem:
+                #ifndef NDEBUG
+                    printf("[Standard library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Unlock
+                mutex_unlock(p_array->_lock);
+
+                // Error
+                return 0;
+        }
+    }
+}
+
+int array_remove ( array *const p_array, signed index, void **const pp_value )
+{
+
+    // Argument check
+    if ( p_array == (void *) 0 ) goto no_array;
+
+    // State check
+    if ( p_array->element_count == 0 ) goto no_elements;
+    
+    // Initialized data
+    size_t _index = 0;
+
+    // Lock
+    mutex_lock(p_array->_lock);
+
+    // Error check
+    if ( p_array->element_count == (size_t) abs(index) ) goto bounds_error;
+
+    // Store the correct index
+    _index = ( index >= 0 ) ? index : p_array->element_count - (size_t) abs(index);
+    
+    // Store the element
+    if ( pp_value != (void *) 0 ) *pp_value = p_array->elements[_index];
+
+    no_value:
+
+    // Edge case
+    if ( index == p_array->element_count-1 ) goto done;
+
+    // Iterate from the index of the removed element to the end of the array
+    for (size_t i = _index; i < p_array->element_count-1; i++)
+    
+        // Shift elements
+        p_array->elements[i] = p_array->elements[i+1];
+
+    done:
+
+    // Decrement the element counter
+    p_array->element_count--;
+
+    // Unlock
+    mutex_unlock(p_array->_lock);
+
+    // Success
+    return 1;
+
+    // Error handling
+    {
+
+        // Argument errors
+        {
+            no_array:
+                #ifndef NDEBUG
+                    printf("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
+
+        // Array errors
+        {
+            bounds_error:
+                #ifndef NDEBUG
+                    printf("[array] Index out of bounds in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+
+            no_elements:
+                #ifndef NDEBUG
+                    printf("[array] Can not index an empty array in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error 
+                return 0;
+        
+        }
+    
         // Standard library errors
         {
             no_mem:
