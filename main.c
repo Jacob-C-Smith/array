@@ -63,7 +63,7 @@ void print_array_element ( const void *const p_value, size_t i )
 {
 
     // Print the element
-    printf("[%zu] %s\n", i, p_value);
+    printf("[%zu] %s\n", i, (const char *const)p_value);
     
     // Done
     return;
