@@ -12,6 +12,7 @@
 // Standard library
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -81,6 +82,22 @@ DLLEXPORT int array_construct ( array **const pp_array, size_t size );
  * @return 1 on success, 0 on error
  */
 DLLEXPORT int array_from_elements ( array **const pp_array, void *const *const elements );
+
+/** !
+ *  Construct an array from parameters
+ *
+ * @param pp_array      return
+ * @param size          the size of the array
+ * @param element_count the quantity of variadic arguments 
+ * @param ...           variadic elements
+ *
+ * @sa array_construct
+ * @sa array_from_elements
+ * @sa array_destroy
+ *
+ * @return 1 on success, 0 on error
+ */
+DLLEXPORT int array_from_arguments ( array **const pp_array, size_t size, size_t element_count, ... );
 
 // Accessors
 /** !
@@ -185,7 +202,7 @@ DLLEXPORT int array_free_clear ( array *const p_array, void (*const free_fun_ptr
  * 
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int array_foreach_i ( const array *const p_array, void (*const function)(void *const value, size_t index) );
+DLLEXPORT int array_foreach_i ( const array *const p_array, void (*const function)(const void *const value, size_t index) );
 
 // Destructors
 /** !

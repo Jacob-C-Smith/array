@@ -1,3 +1,11 @@
+/** !
+ * Example program for array module
+ * 
+ * @file main.c
+ * 
+ * @author Jacob Smith
+ */
+
 // Standard library
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,7 +14,7 @@
 #include <array/array.h>
 
 // Forward declaration
-int print_all_elements(array* a);
+void print_array_element (const void *const p_value, size_t i);
 
 // Entry point
 int main ( int argc, const char* argv[] )
@@ -23,16 +31,23 @@ int main ( int argc, const char* argv[] )
     // Make an array with 4 elements
     array_construct(&p_array, 4);
 
+    // Construct an array
+    array_from_arguments(&p_array, 4, 2, "Red", "Yellow");
+
     // Insert some items
-    array_add(p_array, "Red");
     array_add(p_array, "Green");
     array_add(p_array, "Blue");
 
     // Print the arrays' keys
-    print_all_elements(p_array);
+    array_foreach_i(p_array, &print_array_element);
 
+    // Get a slice of the array
     array_slice(p_array, (void**)slice_of_array, 1, 2);
 
+    // Formatting
+    printf("\nSlice [1..2]\n");
+
+    // Print the array slice
     printf("%s\n",slice_of_array[0]);
     printf("%s\n",slice_of_array[1]);
     
@@ -44,29 +59,12 @@ int main ( int argc, const char* argv[] )
 }
 
 // Print the arrays' elements
-int print_all_elements(array* p_array)
+void print_array_element (const void *const p_value, size_t i)
 {
 
-    if ( p_array == 0 )
-        return 0;
-
-    // Get the arrays' elements
-    void   **pp_elements   = 0;
-    size_t   count         = 0;
-
-    array_get(p_array, 0, &count);
-    pp_elements = calloc(count, sizeof(void *));
-    array_get(p_array, pp_elements, 0);
-
-    // Iterate over each element
-    for (size_t i = 0; i < count; i++)
-
-        // Print each key
-        printf("[%zu] %s\n", i, (char *)pp_elements[i]);
+    // Print the element
+    printf("[%zu] %s\n", i, p_value);
     
-    // Formatting
-    putchar('\n');
-    
-    // Success
-    return 1;
+    // Done
+    return;
 }
