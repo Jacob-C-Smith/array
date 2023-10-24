@@ -38,7 +38,7 @@ int main ( int argc, const char* argv[] )
     array_add(p_array, "Green");
     array_add(p_array, "Blue");
 
-    // Print the arrays' keys
+    // Print the arrays' elements
     array_foreach_i(p_array, &print_array_element);
 
     // Get a slice of the array
