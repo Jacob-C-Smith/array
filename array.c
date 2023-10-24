@@ -6,7 +6,7 @@
  * @author Jacob Smith
  */
 
-// Headers
+// Header
 #include <array/array.h>
 
 // Structure definitions
@@ -216,15 +216,76 @@ int array_from_elements ( array **const pp_array, void *const *const elements )
     }
 }
 
+int array_from_arguments ( array **const pp_array, size_t size, size_t element_count, ... )
+{
+
+    // Argument check
+    if ( pp_array == (void *) 0 ) goto no_array;
+
+    // Uninitialized data
+    va_list list;
+
+    // Initialized data
+    array *p_array = 0;
+
+    // Initialize the variadic list
+    va_start(list, element_count);
+
+    // Allocate an array
+    if ( array_construct(&p_array, size) == 0 ) goto failed_to_allocate_array;        
+
+    // Iterate over each key
+    for (size_t i = 0; i < element_count; i++)
+
+        // Add the key to the array
+        array_add(p_array, va_arg(list, void *));
+    
+    // Update the element count
+    p_array->element_count = element_count;
+
+    // End the variadic list
+    va_end(list);
+
+    // Return a pointer to the caller
+    *pp_array = p_array;
+
+    // Success
+    return 1;
+
+    // Error handling
+    {
+
+        // Argument errors
+        {
+            no_array:
+                #ifndef NDEBUG
+                    printf("[array] Null pointer provided for \"pp_array\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error 
+                return 0;
+        }
+
+        // Array errors
+        {
+            failed_to_allocate_array:
+                #ifndef NDEBUG
+                    printf("[array] Call to \"array_construct\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
+    }
+}
+
 int array_index ( const array *const p_array, signed index, void **const pp_value )
 {
 
     // Argument errors
-    #ifndef NDEBUG
-        if ( p_array                == (void *) 0 ) goto no_array;
-        if ( p_array->element_count ==          0 ) goto no_elements;
-        if ( pp_value               == (void *) 0 ) goto no_value;
-    #endif
+    if ( p_array                == (void *) 0 ) goto no_array;
+    if ( p_array->element_count ==          0 ) goto no_elements;
+    if ( pp_value               == (void *) 0 ) goto no_value;
 
     // Error check
     if ( p_array->element_count == (size_t) abs(index) ) goto bounds_error;
@@ -569,7 +630,7 @@ int array_free_clear ( array *const p_array, void (*const free_fun_ptr)(void *) 
     }
 }
 
-int array_foreach_i ( const array *const p_array, void (*const function)(void *const value, size_t index) )
+int array_foreach_i ( const array *const p_array, void (*const function)(const void *const value, size_t index) )
 {
 
     // Argument check
@@ -628,13 +689,13 @@ int array_destroy ( array **const pp_array )
     mutex_unlock(p_array->_lock);
 
     // Free the array contents
-    if ( ARRAY_REALLOC(p_array->elements, 0) ) goto failed_to_free;
+    (void) ARRAY_REALLOC(p_array->elements, 0);
 
     // Destroy the mutex
     mutex_destroy(&p_array->_lock);
 
     // Free the array
-    if ( ARRAY_REALLOC(p_array, 0) ) goto failed_to_free;
+    (void) ARRAY_REALLOC(p_array, 0);
     
     // Success
     return 1;
@@ -647,17 +708,6 @@ int array_destroy ( array **const pp_array )
             no_array:
                 #ifndef NDEBUG
                     printf("[array] Null pointer provided for \"pp_array\" in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-
-                // Error
-                return 0;
-        }
-
-        // Standard library errors
-        {
-            failed_to_free:
-                #ifndef NDEBUG
-                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error

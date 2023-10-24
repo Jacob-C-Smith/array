@@ -12,25 +12,23 @@
 // Standard library
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <string.h>
 
 // sync submodule
 #include <sync/sync.h>
 
-// Debug mode
-#undef NDEBUG
-
 // Platform dependent macros
 #ifdef _WIN64
-#define DLLEXPORT extern __declspec(dllexport)
+    #define DLLEXPORT extern __declspec(dllexport)
 #else
-#define DLLEXPORT
+    #define DLLEXPORT
 #endif
 
 // Memory management macro
 #ifndef ARRAY_REALLOC
-#define ARRAY_REALLOC(p, sz) realloc(p,sz)
+    #define ARRAY_REALLOC(p, sz) realloc(p,sz)
 #endif
 
 // Forward declarations
@@ -81,6 +79,22 @@ DLLEXPORT int array_construct ( array **const pp_array, size_t size );
  * @return 1 on success, 0 on error
  */
 DLLEXPORT int array_from_elements ( array **const pp_array, void *const *const elements );
+
+/** !
+ *  Construct an array from parameters
+ *
+ * @param pp_array      return
+ * @param size          the size of the array
+ * @param element_count the quantity of variadic arguments 
+ * @param ...           variadic elements
+ *
+ * @sa array_construct
+ * @sa array_from_elements
+ * @sa array_destroy
+ *
+ * @return 1 on success, 0 on error
+ */
+DLLEXPORT int array_from_arguments ( array **const pp_array, size_t size, size_t element_count, ... );
 
 // Accessors
 /** !
@@ -185,7 +199,7 @@ DLLEXPORT int array_free_clear ( array *const p_array, void (*const free_fun_ptr
  * 
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int array_foreach_i ( const array *const p_array, void (*const function)(void *const value, size_t index) );
+DLLEXPORT int array_foreach_i ( const array *const p_array, void (*const function)(const void *const value, size_t index) );
 
 // Destructors
 /** !

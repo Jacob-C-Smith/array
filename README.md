@@ -66,8 +66,9 @@
 int array_create ( array **const pp_array );
 
 // Constructors
-int array_construct     ( array **const pp_array, size_t size );
-int array_from_elements ( array **const pp_array, void *const *const elements );
+int array_construct      ( array **const pp_array, size_t size );
+int array_from_elements  ( array **const pp_array, void *const *const elements );
+int array_from_arguments ( array **const pp_array, size_t size, size_t element_count, ... )
 
 // Accessors
 int    array_index    ( const array *const p_array, signed index, void **const pp_value );
