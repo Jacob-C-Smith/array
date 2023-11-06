@@ -31,6 +31,19 @@ if ( NOT "${HAS_SYNC}")
     set(HAS_SYNC true PARENT_SCOPE)
 endif()
 
+# Find the log module
+if ( NOT "${HAS_LOG}")
+
+    # Log
+    message("[array] Adding log project")
+
+    # Add the log directory
+    add_subdirectory(${CMAKE_SOURCE_DIR}/extern/log ${CMAKE_SOURCE_DIR}/build/log)
+
+    # Let any parent project know that this project has log
+    set(HAS_LOG true PARENT_SCOPE)
+endif()
+
 # Add the array project
 if ( NOT "${HAS_ARRAY}")
 
@@ -49,9 +62,9 @@ target_link_libraries(array_example sync)
 
 # Add source to the tester
 add_executable (array_test "array_test.c" "array.c")
-add_dependencies(array_test sync)
+add_dependencies(array_test sync log)
 target_include_directories(array_test PUBLIC include)
-target_link_libraries(array_test sync)
+target_link_libraries(array_test sync log)
 
 # Add source to this project's library
 add_library (array SHARED "array.c")

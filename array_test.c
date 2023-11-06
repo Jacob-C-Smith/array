@@ -11,6 +11,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+// Log module
+#include <log/log.h>
+
 // Array module
 #include <array/array.h>
 
@@ -368,10 +371,14 @@ int main ( int argc, const char* argv[] )
 
     // Initialize the timer library
     timer_init();
+    log_init(0, true);
 
     // Formatting
-    printf("|==============|\n| ARRAY TESTER |\n|==============|\n\n");
-
+    printf(
+        "╭──────────────╮\n"\
+        "│ Array tester │\n"\
+        "╰──────────────╯\n\n"
+    );
     // Start
     t0 = timer_high_precision();
 
@@ -382,9 +389,9 @@ int main ( int argc, const char* argv[] )
     t1 = timer_high_precision();
 
     // Report the time it took to run the tests
-    printf("array took ");
+    log_info("array took ");
     print_time_pretty ( (double)(t1-t0)/(double)timer_seconds_divisor() );
-    printf(" to test\n");
+    log_info(" to test\n");
 
     // Flush stdio
     fflush(stdout);
@@ -424,22 +431,22 @@ void print_time_pretty ( double seconds )
     while ( _seconds > 0.000001 ) { microseconds++;_seconds-=0.000001; };
 
     // Print days
-    if ( days ) printf("%zu D, ", days);
+    if ( days ) log_info("%zu D, ", days);
     
     // Print hours
-    if ( hours ) printf("%zu h, ", hours);
+    if ( hours ) log_info("%zu h, ", hours);
 
     // Print minutes
-    if ( minutes ) printf("%zu m, ", minutes);
+    if ( minutes ) log_info("%zu m, ", minutes);
 
     // Print seconds
-    if ( __seconds ) printf("%zu s, ", __seconds);
+    if ( __seconds ) log_info("%zu s, ", __seconds);
     
     // Print milliseconds
-    if ( milliseconds ) printf("%zu ms, ", milliseconds);
+    if ( milliseconds ) log_info("%zu ms, ", milliseconds);
     
     // Print microseconds
-    if ( microseconds ) printf("%zu us", microseconds);
+    if ( microseconds ) log_info("%zu us", microseconds);
     
     // Done
     return;
@@ -509,8 +516,8 @@ void print_final_summary ( void )
     total_fails  += ephemeral_fails;
 
     // Print
-    printf("\nTests: %d, Passed: %d, Failed: %d (%%%.3f)\n",  ephemeral_tests, ephemeral_passes, ephemeral_fails, ((float)ephemeral_passes/(float)ephemeral_tests*100.f));
-    printf("Total: %d, Passed: %d, Failed: %d (%%%.3f)\n\n",  total_tests, total_passes, total_fails, ((float)total_passes/(float)total_tests*100.f));
+    log_info("\nTests: %d, Passed: %d, Failed: %d (%%%.3f)\n",  ephemeral_tests, ephemeral_passes, ephemeral_fails, ((float)ephemeral_passes/(float)ephemeral_tests*100.f));
+    log_info("Total: %d, Passed: %d, Failed: %d (%%%.3f)\n\n",  total_tests, total_passes, total_fails, ((float)total_passes/(float)total_tests*100.f));
     
     // Clear test counters for this test
     ephemeral_tests  = 0;
@@ -525,7 +532,11 @@ void print_test ( const char *scenario_name, const char *test_name, bool passed 
 {
 
     // Initialized data
-    printf("%s_test_%-17s %s\n",scenario_name, test_name, (passed) ? "PASS" : "FAIL");
+    if ( passed )
+        log_pass("[%s] %s %s\n", "PASS", scenario_name, test_name);
+    else
+        log_fail("[%s] %s %s\n", "FAIL", scenario_name, test_name);
+
 
     // Increment the pass/fail counter
     if (passed)
@@ -905,7 +916,7 @@ void test_empty_array ( void (*array_constructor)(array **pp_array), char *name)
 {
 
     // Formatting
-    printf("Scenario: %s\n", name);
+    log_info("Scenario: %s\n", name);
 
     // Test the add function
     print_test(name, "array_add_A", test_add(array_constructor, A_element, one) );
@@ -935,7 +946,7 @@ void test_one_element_array ( void (*array_constructor)(array **pp_array), char 
 {
 
     // Formatting
-    printf("SCENARIO: %s\n", name);
+    log_info("SCENARIO: %s\n", name);
 
     // Test the add function
     print_test(name, "array_add_D", test_add(array_constructor, D_element, one) );
@@ -966,7 +977,7 @@ void test_two_element_array ( void (*array_constructor)(array **pp_array), char 
 {
     
     // Formatting
-    printf("SCENARIO: %s\n", name);
+    log_info("SCENARIO: %s\n", name);
 
     // Test the add function
     print_test(name, "array_add_D", test_add(array_constructor, D_element, one) );
@@ -999,7 +1010,7 @@ void test_three_element_array ( void (*array_constructor)(array **pp_array), cha
 {
 
     // Formatting
-    printf("SCENARIO: %s\n", name);
+    log_info("SCENARIO: %s\n", name);
 
     // Test the add function
     print_test(name, "array_add_D", test_add(array_constructor, D_element, one) );
