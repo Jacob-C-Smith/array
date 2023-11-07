@@ -376,9 +376,10 @@ int main ( int argc, const char* argv[] )
     // Formatting
     printf(
         "╭──────────────╮\n"\
-        "│ Array tester │\n"\
+        "│ array tester │\n"\
         "╰──────────────╯\n\n"
     );
+    
     // Start
     t0 = timer_high_precision();
 
