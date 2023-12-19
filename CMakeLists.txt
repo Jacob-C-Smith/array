@@ -1,5 +1,5 @@
 ﻿# Need CMake 3.0
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required (VERSION 3.28.0)
 
 # This is the name of the repository
 project ("array")
@@ -15,33 +15,33 @@ set(IS_DEBUG_BUILD CMAKE_BUILD_TYPE STREQUAL "Debug")
 # Set for debug mode
 if (${IS_DEBUG_BUILD})
     add_compile_definitions(NDEBUG)
-    add_compile_options(-Wall -Wextra -Wpedantic -Wpointer-arith -Wstrict-prototypes -Wformat-security -Wduplicated-cond -Wfloat-equal -Wshadow -Wconversion -Wjump-misses-init -Wlogical-not-parentheses -Wnull-dereference -Wno-unused-result)
+    add_compile_options(-Wall -Wextra -Wpedantic -Wpointer-arith -Wstrict-prototypes -Wformat-security -Wfloat-equal -Wshadow -Wconversion -Wlogical-not-parentheses -Wnull-dereference -Wno-unused-value)
 endif ()
 
 # Find the sync module
 if ( NOT "${HAS_SYNC}")
 
-    # Log
-    message("[array] Adding sync project")
-
     # Add the sync directory
     add_subdirectory(${CMAKE_SOURCE_DIR}/extern/sync ${CMAKE_SOURCE_DIR}/build/sync)
 
     # Let any parent project know that this project has sync
-    set(HAS_SYNC true PARENT_SCOPE)
+    if(NOT PROJECT_IS_TOP_LEVEL)
+        set(HAS_SYNC true PARENT_SCOPE)
+        set(SYNC_INCLUDE_DIR ${SYNC_INCLUDE_DIR} PARENT_SCOPE)
+    endif()
 endif()
 
 # Find the log module
 if ( NOT "${HAS_LOG}")
 
-    # Log
-    message("[array] Adding log project")
-
     # Add the log directory
     add_subdirectory(${CMAKE_SOURCE_DIR}/extern/log ${CMAKE_SOURCE_DIR}/build/log)
 
     # Let any parent project know that this project has log
-    set(HAS_LOG true PARENT_SCOPE)
+    if(NOT PROJECT_IS_TOP_LEVEL)
+        set(HAS_LOG true PARENT_SCOPE)
+        set(LOG_INCLUDE_DIR ${LOG_INCLUDE_DIR} PARENT_SCOPE)
+    endif()
 endif()
 
 # Add the array project
@@ -50,24 +50,29 @@ if ( NOT "${HAS_ARRAY}")
     # Log
     message("[array] Adding array project")
 
+    set(ARRAY_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/include)
+
     # Let any parent project know that it has the array project
-    set(HAS_ARRAY true PARENT_SCOPE)
+    if(NOT PROJECT_IS_TOP_LEVEL)
+        set(HAS_ARRAY true PARENT_SCOPE)
+        set(ARRAY_INCLUDE_DIR ${ARRAY_INCLUDE_DIR} PARENT_SCOPE)
+    endif()
 endif()
 
 # Add source to this project's executable.
-add_executable (array_example "main.c" "array.c")
-add_dependencies(array_example sync)
-target_include_directories(array_example PUBLIC include include/array ${CMAKE_SOURCE_DIR}/extern/sync/include/)
-target_link_libraries(array_example sync)
+add_executable (array_example "main.c")
+add_dependencies(array_example array)
+target_include_directories(array_example PUBLIC ${ARRAY_INCLUDE_DIR})
+target_link_libraries(array_example array)
 
 # Add source to the tester
-add_executable (array_test "array_test.c" "array.c")
-add_dependencies(array_test sync log)
-target_include_directories(array_test PUBLIC include)
-target_link_libraries(array_test sync log)
+add_executable (array_test "array_test.c")
+add_dependencies(array_test array log)
+target_include_directories(array_test PUBLIC ${ARRAY_INCLUDE_DIR} ${SYNC_INCLUDE_DIR} ${LOG_INCLUDE_DIR})
+target_link_libraries(array_test array log)
 
 # Add source to this project's library
 add_library (array SHARED "array.c")
 add_dependencies(array sync)
-target_include_directories(array PUBLIC include include/array ${CMAKE_SOURCE_DIR}/extern/sync/include/)
+target_include_directories(array PUBLIC ${ARRAY_INCLUDE_DIR} ${SYNC_INCLUDE_DIR})
 target_link_libraries(array sync)
