@@ -785,13 +785,13 @@ int array_destroy ( array **const pp_array )
     mutex_unlock(p_array->_lock);
 
     // Free the array contents
-    (void) ARRAY_REALLOC(p_array->elements, 0);
+    p_array = ARRAY_REALLOC(p_array->elements, 0);
 
     // Destroy the mutex
     mutex_destroy(&p_array->_lock);
 
     // Free the array
-    (void) ARRAY_REALLOC(p_array, 0);
+    p_array = ARRAY_REALLOC(p_array, 0);
     
     // Success
     return 1;
