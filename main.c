@@ -27,7 +27,7 @@ int main ( int argc, const char* argv[] )
     // Initialized data
     array *p_array          = (void *) 0;
     char  *slice_of_array[] = { 0, 0, (void *)0 };
-
+    
     // Make an array with 4 elements
     array_construct(&p_array, 4);
 

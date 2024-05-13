@@ -611,6 +611,9 @@ int array_remove ( array *const p_array, signed index, void **const pp_value )
                     printf("[array] Index out of bounds in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
+                // Unlock
+                mutex_unlock(&p_array->_lock);
+
                 // Error
                 return 0;
 
