@@ -18,6 +18,28 @@ struct array_s
     void    **elements;      // Array contents
 };
 
+// Data
+static bool initialized = false;
+
+void array_init ( void ) 
+{
+
+    // State check
+    if ( initialized == true ) return;
+
+    // Initialize the sync library
+    sync_init();
+    
+    // Initialize the log library
+    log_init();
+
+    // Set the initialized flag
+    initialized = true;
+
+    // Done
+    return; 
+}
+
 int array_create ( array **const pp_array )
 {
 
@@ -813,4 +835,26 @@ int array_destroy ( array **const pp_array )
                 return 0;
         }
     }
+}
+
+void array_exit ( void ) 
+{
+
+    // State check
+    if ( initialized == false ) return;
+
+    // Clean up sync
+    sync_exit();
+
+    // Clean up log
+    log_exit();
+
+    // TODO: Anything else?
+    //
+
+    // Clear the initialized flag
+    initialized = false;
+
+    // Done
+    return;
 }

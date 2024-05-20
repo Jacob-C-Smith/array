@@ -40,6 +40,16 @@ struct array_s;
  */
 typedef struct array_s array;
 
+// Initializer
+/** !
+ * This gets called at runtime before main. 
+ * 
+ * @param void
+ * 
+ * @return void
+ */
+DLLEXPORT void array_init ( void ) __attribute__((constructor));
+
 // Allocaters
 /** !
  *  Allocate memory for an array
@@ -224,3 +234,13 @@ DLLEXPORT int array_foreach_i ( const array *const p_array, void (*const functio
  * @return 1 on success, 0 on error
  */
 DLLEXPORT int array_destroy ( array **const pp_array );
+
+// Cleanup
+/** !
+ * This gets called at runtime after main
+ * 
+ * @param void
+ * 
+ * @return void
+ */
+DLLEXPORT void array_exit ( void ) __attribute__((destructor));
