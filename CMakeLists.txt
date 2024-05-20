@@ -14,8 +14,9 @@ set(IS_DEBUG_BUILD CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 # Set for debug mode
 if (${IS_DEBUG_BUILD})
-    add_compile_definitions(NDEBUG)
     add_compile_options(-Wall -Wextra -Wpedantic -Wpointer-arith -Wstrict-prototypes -Wformat-security -Wfloat-equal -Wshadow -Wconversion -Wlogical-not-parentheses -Wnull-dereference -Wno-unused-value)
+else()
+    add_compile_definitions(NDEBUG)
 endif ()
 
 # Find the sync module

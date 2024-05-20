@@ -68,7 +68,7 @@ int array_create ( array **const pp_array )
         {
             no_array:
                 #ifndef NDEBUG
-                    printf("[array] Null pointer provided for parameter \"pp_array\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for parameter \"pp_array\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
@@ -79,7 +79,7 @@ int array_create ( array **const pp_array )
         {
             no_mem:
                 #ifndef NDEBUG
-                    printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 
                 // Error
@@ -126,7 +126,7 @@ int array_construct ( array **const pp_array, size_t size )
         {
             no_array:
                 #ifndef NDEBUG
-                    printf("[array] Null pointer provided for parameter \"pp_array\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for parameter \"pp_array\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
@@ -134,19 +134,18 @@ int array_construct ( array **const pp_array, size_t size )
 
             zero_size:
                 #ifndef NDEBUG
-                    printf("[array] Zero provided for parameter \"size\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Zero provided for parameter \"size\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
-                return 0;
-                
+                return 0;   
         }
 
         // Array errors
         {
             failed_to_create_array:
                 #ifndef NDEBUG
-                    printf("[array] Failed to create array in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Failed to create array in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
@@ -154,7 +153,7 @@ int array_construct ( array **const pp_array, size_t size )
             
             failed_to_create_mutex:
                 #ifndef NDEBUG
-                    printf("[array] Failed to create mutex in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Failed to create mutex in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
@@ -165,7 +164,7 @@ int array_construct ( array **const pp_array, size_t size )
         {
             no_mem:
                 #ifndef NDEBUG
-                    printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
@@ -210,7 +209,7 @@ int array_from_elements ( array **const pp_array, void *const *const elements )
         {
             no_array:
                 #ifndef NDEBUG
-                    printf("[array] Null pointer provided for \"pp_array\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for \"pp_array\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
@@ -218,7 +217,7 @@ int array_from_elements ( array **const pp_array, void *const *const elements )
 
             no_elements:
                 #ifndef NDEBUG
-                    printf("[array] Null pointer provided for \"keys\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for \"keys\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
@@ -229,7 +228,7 @@ int array_from_elements ( array **const pp_array, void *const *const elements )
         {
             failed_to_allocate_array:
                 #ifndef NDEBUG
-                    printf("[array] Call to \"array_construct\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Call to \"array_construct\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -281,7 +280,7 @@ int array_from_arguments ( array **const pp_array, size_t size, size_t element_c
         {
             no_array:
                 #ifndef NDEBUG
-                    printf("[array] Null pointer provided for \"pp_array\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for \"pp_array\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
@@ -292,7 +291,7 @@ int array_from_arguments ( array **const pp_array, size_t size, size_t element_c
         {
             failed_to_allocate_array:
                 #ifndef NDEBUG
-                    printf("[array] Call to \"array_construct\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Call to \"array_construct\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -327,7 +326,7 @@ int array_index ( const array *const p_array, signed index, void **const pp_valu
     {
         no_array:
             #ifndef NDEBUG
-                printf("[array] Null pointer provided for parameter \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                log_error("[array] Null pointer provided for parameter \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
             #endif
 
             // Error
@@ -335,7 +334,7 @@ int array_index ( const array *const p_array, signed index, void **const pp_valu
 
         no_value:
             #ifndef NDEBUG
-                printf("[array] Null pointer provided for parameter \"pp_vale\" in call to function \"%s\"\n", __FUNCTION__);
+                log_error("[array] Null pointer provided for parameter \"pp_vale\" in call to function \"%s\"\n", __FUNCTION__);
             #endif
 
             // Error
@@ -343,7 +342,7 @@ int array_index ( const array *const p_array, signed index, void **const pp_valu
 
         no_elements:
             #ifndef NDEBUG
-                printf("[array] Can not index an empty array in call to function \"%s\"\n", __FUNCTION__);
+                log_error("[array] Can not index an empty array in call to function \"%s\"\n", __FUNCTION__);
             #endif
 
             // Error 
@@ -351,7 +350,7 @@ int array_index ( const array *const p_array, signed index, void **const pp_valu
         
         bounds_error:
             #ifndef NDEBUG
-                printf("[array] Index out of bounds in call to function \"%s\"\n", __FUNCTION__);
+                log_error("[array] Index out of bounds in call to function \"%s\"\n", __FUNCTION__);
             #endif
 
             // Error
@@ -389,7 +388,7 @@ int array_get ( const array *const p_array, void **const pp_elements, size_t *co
         {
             no_array:
                 #ifndef NDEBUG
-                    printf("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
@@ -426,7 +425,7 @@ int array_slice ( const array *const p_array, void *pp_elements[], signed lower_
         {
             no_array:
                 #ifndef NDEBUG
-                    printf("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
@@ -434,7 +433,7 @@ int array_slice ( const array *const p_array, void *pp_elements[], signed lower_
 
             erroneous_lower_bound:
                 #ifndef NDEBUG
-                    printf("[array] Parameter \"lower_bound\" must be greater than zero in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Parameter \"lower_bound\" must be greater than zero in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
@@ -442,7 +441,7 @@ int array_slice ( const array *const p_array, void *pp_elements[], signed lower_
                 
             erroneous_upper_bound:
                 #ifndef NDEBUG
-                    printf("[array] Parameter \"upper_bound\" must be less than or equal to array size in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Parameter \"upper_bound\" must be less than or equal to array size in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
@@ -467,7 +466,7 @@ bool array_is_empty ( const array *const p_array )
         {
             no_array:
                 #ifndef NDEBUG
-                    printf("[array] Null pointer provided for parameter \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for parameter \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -492,7 +491,7 @@ size_t array_size ( const array *const p_array )
         {
             no_array:
                 #ifndef NDEBUG
-                    printf("[array] Null pointer provided for parameter \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for parameter \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -543,7 +542,7 @@ int array_add ( array *const p_array, void *const p_element )
         {
             no_array:
                 #ifndef NDEBUG
-                    printf("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -554,7 +553,7 @@ int array_add ( array *const p_array, void *const p_element )
         {
             no_mem:
                 #ifndef NDEBUG
-                    printf("[Standard library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Unlock
@@ -619,7 +618,7 @@ int array_remove ( array *const p_array, signed index, void **const pp_value )
         {
             no_array:
                 #ifndef NDEBUG
-                    printf("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -630,7 +629,7 @@ int array_remove ( array *const p_array, signed index, void **const pp_value )
         {
             bounds_error:
                 #ifndef NDEBUG
-                    printf("[array] Index out of bounds in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Index out of bounds in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Unlock
@@ -641,7 +640,7 @@ int array_remove ( array *const p_array, signed index, void **const pp_value )
 
             no_elements:
                 #ifndef NDEBUG
-                    printf("[array] Can not index an empty array in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Can not index an empty array in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
@@ -653,7 +652,7 @@ int array_remove ( array *const p_array, signed index, void **const pp_value )
         {
             no_mem:
                 #ifndef NDEBUG
-                    printf("[Standard library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Unlock
@@ -693,7 +692,7 @@ int array_clear ( array *const p_array )
         {
             no_array:
                 #ifndef NDEBUG
-                    printf("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -734,7 +733,7 @@ int array_free_clear ( array *const p_array, void (*const free_fun_ptr)(void *) 
         {
             no_array:
                 #ifndef NDEBUG
-                    printf("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -742,7 +741,7 @@ int array_free_clear ( array *const p_array, void (*const free_fun_ptr)(void *) 
             
             no_free_func:
                 #ifndef NDEBUG
-                    printf("[array] Null pointer provided for \"free_fun_ptr\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for \"free_fun_ptr\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -774,7 +773,7 @@ int array_foreach_i ( const array *const p_array, void (*const function)(const v
         {
             no_array:
                 #ifndef NDEBUG
-                    printf("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -782,7 +781,7 @@ int array_foreach_i ( const array *const p_array, void (*const function)(const v
             
             no_free_func:
                 #ifndef NDEBUG
-                    printf("[array] Null pointer provided for \"function\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for \"function\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -828,7 +827,7 @@ int array_destroy ( array **const pp_array )
         {
             no_array:
                 #ifndef NDEBUG
-                    printf("[array] Null pointer provided for \"pp_array\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for \"pp_array\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
