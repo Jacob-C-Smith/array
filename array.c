@@ -300,7 +300,7 @@ int array_from_arguments ( array **const pp_array, size_t size, size_t element_c
     }
 }
 
-int array_index ( const array *const p_array, signed index, void **const pp_value )
+int array_index ( array *const p_array, signed index, void **const pp_value )
 {
 
     // Argument errors
@@ -358,7 +358,7 @@ int array_index ( const array *const p_array, signed index, void **const pp_valu
     }
 }
 
-int array_get ( const array *const p_array, void **const pp_elements, size_t *const p_count )
+int array_get ( array *const p_array, void **const pp_elements, size_t *const p_count )
 {
 
     // Argument check
@@ -397,7 +397,7 @@ int array_get ( const array *const p_array, void **const pp_elements, size_t *co
     }
 }
 
-int array_slice ( const array *const p_array, void *pp_elements[], signed lower_bound, signed upper_bound )
+int array_slice ( array *const p_array, void *pp_elements[], signed lower_bound, signed upper_bound )
 {
 
     // Argument check
@@ -450,7 +450,7 @@ int array_slice ( const array *const p_array, void *pp_elements[], signed lower_
     }
 }
 
-bool array_is_empty ( const array *const p_array )
+bool array_is_empty ( array *const p_array )
 {
 
     // Argument check
@@ -475,7 +475,7 @@ bool array_is_empty ( const array *const p_array )
     }
 }
 
-size_t array_size ( const array *const p_array )
+size_t array_size ( array *const p_array )
 {
 
     // Argument check
@@ -584,15 +584,13 @@ int array_remove ( array *const p_array, signed index, void **const pp_value )
     if ( p_array->element_count == (size_t) abs(index) ) goto bounds_error;
 
     // Store the correct index
-    _index = ( index >= 0 ) ? index : p_array->element_count - (size_t) abs(index);
+    _index = ( index >= 0 ) ? (size_t) index : (size_t) p_array->element_count - (size_t) abs(index);
     
     // Store the element
     if ( pp_value != (void *) 0 ) *pp_value = p_array->elements[_index];
 
-    no_value:
-
     // Edge case
-    if ( index == p_array->element_count-1 ) goto done;
+    if ( (size_t) index == p_array->element_count-1 ) goto done;
 
     // Iterate from the index of the removed element to the end of the array
     for (size_t i = _index; i < p_array->element_count-1; i++)
@@ -646,20 +644,6 @@ int array_remove ( array *const p_array, signed index, void **const pp_value )
                 // Error 
                 return 0;
         
-        }
-    
-        // Standard library errors
-        {
-            no_mem:
-                #ifndef NDEBUG
-                    log_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-
-                // Unlock
-                mutex_unlock(&p_array->_lock);
-
-                // Error
-                return 0;
         }
     }
 }
@@ -750,7 +734,7 @@ int array_free_clear ( array *const p_array, void (*const free_fun_ptr)(void *) 
     }
 }
 
-int array_foreach_i ( const array *const p_array, void (*const function)(const void *const value, size_t index) )
+int array_foreach_i ( array *const p_array, void (*const function)(const void *const value, size_t index) )
 {
 
     // Argument check
@@ -809,13 +793,13 @@ int array_destroy ( array **const pp_array )
     mutex_unlock(&p_array->_lock);
 
     // Free the array contents
-    (void) ARRAY_REALLOC(p_array->elements, 0);
+    if ( ARRAY_REALLOC(p_array->elements, 0) ) goto failed_to_free;
 
     // Destroy the mutex
     mutex_destroy(&p_array->_lock);
 
     // Free the array
-    (void) ARRAY_REALLOC(p_array, 0);
+    if ( ARRAY_REALLOC(p_array, 0) ) goto failed_to_free;
     
     // Success
     return 1;
@@ -828,6 +812,17 @@ int array_destroy ( array **const pp_array )
             no_array:
                 #ifndef NDEBUG
                     log_error("[array] Null pointer provided for \"pp_array\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
+
+        // Standard library errors
+        {
+            failed_to_free:
+                #ifndef NDEBUG
+                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error

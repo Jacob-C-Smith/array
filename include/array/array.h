@@ -120,7 +120,7 @@ DLLEXPORT int array_from_arguments ( array **const pp_array, size_t size, size_t
  * 
  * @return 1 on success, 0 on error 
  */
-DLLEXPORT int array_index ( const array *const p_array, signed index, void **const pp_value );
+DLLEXPORT int array_index ( array *const p_array, signed index, void **const pp_value );
 
 /** !
  *  Get an array of elements
@@ -133,7 +133,7 @@ DLLEXPORT int array_index ( const array *const p_array, signed index, void **con
  *
  * @return  1 on success, 0 on error 
  */
-DLLEXPORT int array_get ( const array * const p_array, void ** const pp_elements, size_t *const p_count );
+DLLEXPORT int array_get ( array * const p_array, void ** const pp_elements, size_t *const p_count );
 
 /** !
  * Get a slice of the array specified by a lower bound and an upper bound
@@ -148,7 +148,7 @@ DLLEXPORT int array_get ( const array * const p_array, void ** const pp_elements
  * 
  * @return 1 on success, 0 on error 
 */
-DLLEXPORT int array_slice ( const array *const p_array, void *pp_elements[], signed lower_bound, signed upper_bound );
+DLLEXPORT int array_slice ( array *const p_array, void *pp_elements[], signed lower_bound, signed upper_bound );
 
 /** !
  *  Is an array empty?
@@ -157,7 +157,7 @@ DLLEXPORT int array_slice ( const array *const p_array, void *pp_elements[], sig
  * 
  * @return true if array has no contents else false
  */
-DLLEXPORT bool array_is_empty ( const array *const p_array );
+DLLEXPORT bool array_is_empty ( array *const p_array );
 
 /** !
  *  Get the size of an array
@@ -166,7 +166,7 @@ DLLEXPORT bool array_is_empty ( const array *const p_array );
  * 
  * @return size of array
  */
-DLLEXPORT size_t array_size ( const array *const p_array );
+DLLEXPORT size_t array_size ( array *const p_array );
 
 // Mutators
 /** !
@@ -221,7 +221,7 @@ DLLEXPORT int array_free_clear ( array *const p_array, void (*const free_fun_ptr
  * 
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int array_foreach_i ( const array *const p_array, void (*const function)(const void *const value, size_t index) );
+DLLEXPORT int array_foreach_i ( array *const p_array, void (*const function)(const void *const value, size_t index) );
 
 // Destructors
 /** !
