@@ -1,4 +1,4 @@
-﻿# Need CMake 3.16
+﻿# Need CMake 3.16.0
 cmake_minimum_required (VERSION 3.16.0)
 
 # This is the name of the repository
