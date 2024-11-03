@@ -231,11 +231,11 @@ DLLEXPORT int array_foreach_i ( array *const p_array, fn_array_foreach_i *pfn_ar
  * Call function on every element in p_array
  *
  * @param p_array array
- * @param function pointer to function of type void (*)(void *value, size_t index)
+ * @param pfn_next pointer to log function
  * 
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int array_log ( array *p_array, ffn_log pfn_log, const char *const format, ... );
+DLLEXPORT int array_log ( array *p_array, void *pfn_next, const char *const format, ... );
 
 // Destructors
 /** !

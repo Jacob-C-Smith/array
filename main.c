@@ -13,8 +13,8 @@
 // Include
 #include <array/array.h>
 
-// Forward declaration
-void print_array_element ( const void *const p_value, size_t i );
+// Forward declarations
+void lower_case_string ( const void *const p_value, size_t i );
 
 // Entry point
 int main ( int argc, const char* argv[] )
@@ -31,18 +31,21 @@ int main ( int argc, const char* argv[] )
     // Make an array with 4 elements
     array_construct(&p_array, 4);
 
+    // Insert some items
+    array_add(p_array, "Green");
+    array_add(p_array, "Blue");
+    
     // Construct an array
     array_from_arguments(&p_array, 4, 2, "Red", "Yellow");
 
-    // Insert some items
     array_add(p_array, "Green");
     array_add(p_array, "Blue");
 
     // Print the arrays' elements
-    array_foreach_i(p_array, &print_array_element);
+    array_foreach_i(p_array, &lower_case_string);
 
     // Get a slice of the array
-    array_slice(p_array, (void**)slice_of_array, 1, 2);
+    array_slice(p_array, (void**)slice_of_array, 0, 1);
 
     // Formatting
     printf("\nSlice [1..2]\n");
@@ -59,11 +62,19 @@ int main ( int argc, const char* argv[] )
 }
 
 // Print the arrays' elements
-void print_array_element ( const void *const p_value, size_t i )
+void lower_case_string ( const void *const p_value, size_t i )
 {
 
+    char _item[16] = { 0 };
+    size_t len = strlen(p_value);
+    
+    strncpy(_item, p_value, len);
+
+    for (size_t j = 0; j < len; j++)
+        _item[j] |= 0x20;
+
     // Print the element
-    printf("[%zu] %s\n", i, (const char *const)p_value);
+    printf("%s\n", (const char *const)&_item);
     
     // Done
     return;

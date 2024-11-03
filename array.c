@@ -774,12 +774,12 @@ int array_foreach_i ( array *const p_array, fn_array_foreach_i *pfn_array_foreac
     }
 }
 
-int array_log ( array *p_array, ffn_log pfn_log, const char *const format, ... )
+int array_log ( array *p_array, void *pfn_next, const char *const format, ... )
 {
 
     // Argument check
-    if ( p_array == (void *) 0 ) goto no_array;
-    if ( pfn_log == (void *) 0 ) goto no_log_func;
+    if ( p_array  == (void *) 0 ) goto no_array;
+    if ( pfn_next == (void *) 0 ) return 0;
 
     // Print the header
     log_info("=== %s : %p ===\n", format, p_array);
@@ -788,8 +788,8 @@ int array_log ( array *p_array, ffn_log pfn_log, const char *const format, ... )
     for (size_t i = 0; i < p_array->element_count; i++)
         
         // Call the function
-        pfn_log(p_array->elements[i], i);
-
+        ;// TODO
+        
     // Print a newline
     putchar('\n');
 
