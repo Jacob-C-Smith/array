@@ -31,14 +31,17 @@
     #define ARRAY_REALLOC(p, sz) realloc(p,sz)
 #endif
 
-// Forward declarations
-struct array_s;
 
 // Type definitions
 /** !
  *  @brief The type definition of an array struct
  */
 typedef struct array_s array;
+
+/** !
+ *  @brief A function to be called for each element in an array
+ */
+typedef int (fn_array_foreach_i)(const void *const value, size_t index);
 
 // Initializer
 /** !
@@ -214,6 +217,17 @@ DLLEXPORT int array_free_clear ( array *const p_array, void (*const free_fun_ptr
 
 // Iterators
 /** !
+ * Call function on every element in an array
+ *
+ * @param p_array  the array
+ * @param function pointer to function of type void (*)(void *value, size_t index)
+ * 
+ * @return 1 on success, 0 on error
+ */
+DLLEXPORT int array_foreach_i ( array *const p_array, fn_array_foreach_i *pfn_array_foreach_i );
+
+// Info
+/** !
  * Call function on every element in p_array
  *
  * @param p_array array
@@ -221,7 +235,7 @@ DLLEXPORT int array_free_clear ( array *const p_array, void (*const free_fun_ptr
  * 
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int array_foreach_i ( array *const p_array, void (*const function)(const void *const value, size_t index) );
+DLLEXPORT int array_log ( array *p_array, ffn_log pfn_log, const char *const format, ... );
 
 // Destructors
 /** !

@@ -733,19 +733,19 @@ int array_free_clear ( array *const p_array, void (*const free_fun_ptr)(void *) 
         }
     }
 }
-
-int array_foreach_i ( array *const p_array, void (*const function)(const void *const value, size_t index) )
+ 
+int array_foreach_i ( array *const p_array, fn_array_foreach_i *pfn_array_foreach_i ) 
 {
 
     // Argument check
-    if ( p_array  == (void *) 0 ) goto no_array;
-    if ( function == (void *) 0 ) goto no_free_func;
+    if ( p_array             == (void *) 0 ) goto no_array;
+    if ( pfn_array_foreach_i == (void *) 0 ) goto no_free_func;
 
     // Iterate over each element in the array
     for (size_t i = 0; i < p_array->element_count; i++)
         
         // Call the function
-        function(p_array->elements[i], i);
+        pfn_array_foreach_i(p_array->elements[i], i);
 
     // Success
     return 1;
@@ -766,6 +766,52 @@ int array_foreach_i ( array *const p_array, void (*const function)(const void *c
             no_free_func:
                 #ifndef NDEBUG
                     log_error("[array] Null pointer provided for \"function\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
+    }
+}
+
+int array_log ( array *p_array, ffn_log pfn_log, const char *const format, ... )
+{
+
+    // Argument check
+    if ( p_array == (void *) 0 ) goto no_array;
+    if ( pfn_log == (void *) 0 ) goto no_log_func;
+
+    // Print the header
+    log_info("=== %s : %p ===\n", format, p_array);
+
+    // Iterate over each element in the array
+    for (size_t i = 0; i < p_array->element_count; i++)
+        
+        // Call the function
+        pfn_log(p_array->elements[i], i);
+
+    // Print a newline
+    putchar('\n');
+
+    // Success
+    return 1;
+
+    // Error handling
+    {
+        
+        // Argument errors
+        {
+            no_array:
+                #ifndef NDEBUG
+                    log_error("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+            
+            no_log_func:
+                #ifndef NDEBUG
+                    log_error("[array] Null pointer provided for \"pfn_log\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
