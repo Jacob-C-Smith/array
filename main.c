@@ -42,7 +42,7 @@ int main ( int argc, const char* argv[] )
     array_add(p_array, "Blue");
 
     // Print the arrays' elements
-    array_foreach_i(p_array, &lower_case_string);
+    array_foreach_i(p_array, (fn_array_foreach_i *)&lower_case_string);
 
     // Get a slice of the array
     array_slice(p_array, (void**)slice_of_array, 0, 1);
@@ -65,6 +65,10 @@ int main ( int argc, const char* argv[] )
 void lower_case_string ( const void *const p_value, size_t i )
 {
 
+    // Supress compiler warnings
+    (void) i;
+    
+    // Initialized data
     char _item[16] = { 0 };
     size_t len = strlen(p_value);
     
