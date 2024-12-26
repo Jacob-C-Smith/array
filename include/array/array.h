@@ -183,6 +183,21 @@ DLLEXPORT size_t array_size ( array *const p_array );
 DLLEXPORT int array_add ( array *const p_array, void *const p_element );
 
 /** !
+ *  Update an array element at an index
+ *
+ * @param p_array the array
+ * @param index the index
+ * @param p_value the new element
+ *
+ * @sa array_index
+ * @sa array_get
+ * @sa array_remove
+ *
+ * @return  1 on success, 0 on error 
+ */
+DLLEXPORT int array_set ( array *const p_array, signed index, void *const p_value );
+
+/** !
  *  Remove an element from an array. If index is negative,
  *  index = size - |index|, such that [A,B,C,D,E] remove(-2) -> D
  *

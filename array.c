@@ -565,6 +565,75 @@ int array_add ( array *const p_array, void *const p_element )
     }
 }
 
+int array_set ( array *const p_array, signed index, void *const p_value )
+{
+    
+    // Argument check   
+    if ( p_array == (void *) 0 ) goto no_array;
+
+    // State check
+    if ( p_array->element_count == 0 ) goto no_elements;
+    
+    // Initialized data
+    size_t _index = 0;
+
+    // Lock
+    mutex_lock(&p_array->_lock);
+
+    // Error check
+    if ( p_array->element_count == (size_t) abs(index) ) goto bounds_error;
+
+    // Store the correct index
+    _index = ( index >= 0 ) ? (size_t) index : (size_t) p_array->element_count - (size_t) abs(index);
+    
+    // Store the element
+    p_array->elements[_index] = p_value;
+
+    // Unlock
+    mutex_unlock(&p_array->_lock);
+
+    // Success
+    return 1;
+
+    // Error handling
+    {
+
+        // Argument errors
+        {
+            no_array:
+                #ifndef NDEBUG
+                    log_error("[array] Null pointer provided for \"p_array\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
+
+        // Array errors
+        {
+            bounds_error:
+                #ifndef NDEBUG
+                    log_error("[array] Index out of bounds in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Unlock
+                mutex_unlock(&p_array->_lock);
+
+                // Error
+                return 0;
+
+            no_elements:
+                #ifndef NDEBUG
+                    log_error("[array] Can not index an empty array in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error 
+                return 0;
+        
+        }
+    }
+}
+
 int array_remove ( array *const p_array, signed index, void **const pp_value )
 {
 
