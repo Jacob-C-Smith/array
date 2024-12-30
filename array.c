@@ -12,10 +12,10 @@
 // Structure definitions
 struct array_s
 {
-    size_t    element_count, // Integer quantity of elements
-              iterable_max;  // Upper bound of iterable array 
-    mutex     _lock;         // Locked when writing values
-    void    **elements;      // Array contents
+    size_t    count,        // Quantity of elements in array
+              max;          // Quantity of elements array can hold 
+    mutex     _lock;        // Locked when writing values
+    void    *_p_elements[]; // Array contents
 };
 
 // Data
@@ -101,17 +101,18 @@ int array_construct ( array **const pp_array, size_t size )
     // Allocate an array
     if ( array_create(&p_array) == 0 ) goto failed_to_create_array;
     
-    // Set the count and iterator max
-    p_array->iterable_max = 1;
+    // Set the count and max
+    p_array->count = 0,
+    p_array->max   = size;
 
     // Allocate "size" number of properties
-    p_array->elements = ARRAY_REALLOC(0, size * sizeof(void *));
+    p_array = ARRAY_REALLOC(p_array, sizeof(array) + (p_array->max * sizeof(void *)));
+
+    // Error checking
+    if ( p_array == (void *) 0 ) goto no_mem;
 
     // Create a mutex
     if ( mutex_create(&p_array->_lock) == 0 ) goto failed_to_create_mutex;
-
-    // Error checking
-    if ( p_array->elements == (void *) 0 ) goto no_mem;
 
     // Return a pointer to the caller
     *pp_array = p_array;
@@ -173,28 +174,28 @@ int array_construct ( array **const pp_array, size_t size )
     }
 }
 
-int array_from_elements ( array **const pp_array, void *const *const elements )
+int array_from_elements ( array **pp_array, void *_p_elements[] )
 {
 
     // Argument check
     if ( pp_array == (void *) 0 ) goto no_array;
-    if ( elements == (void *) 0 ) goto no_elements;
+    if ( _p_elements == (void *) 0 ) goto no_elements;
 
     // Initialized data
     array  *p_array       = 0;
     size_t  element_count = 0;
 
     // Count elements
-    while( elements[++element_count] );
+    while( _p_elements[++element_count] );
 
     // Allocate an array
     if ( array_construct(&p_array, element_count) == 0 ) goto failed_to_allocate_array;        
 
     // Iterate over each key
-    for (size_t i = 0; elements[i]; i++)
+    for (size_t i = 0; _p_elements[i]; i++)
 
         // Add the key to the array
-        array_add(p_array, elements[i]);
+        array_add(p_array, _p_elements[i]);
 
     // Return
     *pp_array = p_array;
@@ -217,7 +218,7 @@ int array_from_elements ( array **const pp_array, void *const *const elements )
 
             no_elements:
                 #ifndef NDEBUG
-                    log_error("[array] Null pointer provided for \"keys\" in call to function \"%s\"\n", __FUNCTION__);
+                    log_error("[array] Null pointer provided for \"_p_elements\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
@@ -262,7 +263,7 @@ int array_from_arguments ( array **const pp_array, size_t size, size_t element_c
         array_add(p_array, va_arg(list, void *));
     
     // Update the element count
-    p_array->element_count = element_count;
+    p_array->count = element_count;
 
     // End the variadic list
     va_end(list);
@@ -304,20 +305,20 @@ int array_index ( array *const p_array, signed index, void **const pp_value )
 {
 
     // Argument errors
-    if ( p_array                == (void *) 0 ) goto no_array;
-    if ( p_array->element_count ==          0 ) goto no_elements;
-    if ( pp_value               == (void *) 0 ) goto no_value;
+    if ( p_array        == (void *) 0 ) goto no_array;
+    if ( p_array->count ==          0 ) goto no_elements;
+    if ( pp_value       == (void *) 0 ) goto no_value;
 
     // Error check
-    if ( p_array->element_count == (size_t) abs(index) ) goto bounds_error;
+    if ( p_array->count == (size_t) abs(index) ) goto bounds_error;
 
     // Positive index
     if ( index >= 0 )
-        *pp_value = p_array->elements[index];
+        *pp_value = p_array->_p_elements[index];
 
     // Negative numbers
     else 
-        *pp_value = p_array->elements[p_array->element_count - (size_t) abs(index)];
+        *pp_value = p_array->_p_elements[p_array->count - (size_t) abs(index)];
 
     // Success
     return 1;
@@ -369,11 +370,11 @@ int array_get ( array *const p_array, void **const pp_elements, size_t *const p_
 
     // Return the elements
     if ( pp_elements )
-        memcpy(pp_elements, p_array->elements, sizeof(void *)*p_array->element_count);
+        memcpy(pp_elements, p_array->_p_elements, (sizeof(void *) * p_array->count) );
     
     // Return the count
     if ( p_count )
-        *p_count = p_array->element_count;
+        *p_count = p_array->count;
 
     // Unlock
     mutex_unlock(&p_array->_lock);
@@ -403,14 +404,14 @@ int array_slice ( array *const p_array, void *pp_elements[], signed lower_bound,
     // Argument check
     if ( p_array == (void *) 0 ) goto no_array;
     if ( lower_bound < 0 ) goto erroneous_lower_bound;
-    if ( p_array->element_count < (size_t) upper_bound ) goto erroneous_upper_bound;
+    if ( p_array->count < (size_t) upper_bound ) goto erroneous_upper_bound;
 
     // Lock
     mutex_lock(&p_array->_lock);
 
     // Return the elements
     if ( pp_elements )
-        memcpy(pp_elements, &p_array->elements[lower_bound], sizeof(void *) * (size_t) ( upper_bound - lower_bound + 1LL ) );
+        memcpy(pp_elements, &p_array->_p_elements[lower_bound], sizeof(void *) * (size_t) ( upper_bound - lower_bound + 1LL ) );
     
     // Unlock
     mutex_unlock(&p_array->_lock);
@@ -457,7 +458,7 @@ bool array_is_empty ( array *const p_array )
     if ( p_array == (void *) 0 ) goto no_array;
 
     // Success
-    return ( p_array->element_count == 0 );
+    return ( p_array->count == 0 );
 
     // Error handling
     {
@@ -482,7 +483,7 @@ size_t array_size ( array *const p_array )
     if ( p_array == (void *) 0 ) goto no_array;
 
     // Success
-    return p_array->element_count;
+    return p_array->count;
 
     // Error handling
     {
@@ -500,7 +501,7 @@ size_t array_size ( array *const p_array )
     }
 }
 
-int array_add ( array *const p_array, void *const p_element )
+int array_add ( array *p_array, void *p_element )
 {
 
     // Argument check
@@ -510,23 +511,23 @@ int array_add ( array *const p_array, void *const p_element )
     mutex_lock(&p_array->_lock);
 
     // Update the iterables
-    p_array->elements[p_array->element_count] = p_element;
+    p_array->_p_elements[p_array->count] = p_element;
 
     // Increment the entry counter
-    p_array->element_count++;
+    p_array->count++;
 
     // Resize iterable max?
-    if ( p_array->element_count >= p_array->iterable_max )
+    if ( p_array->count >= p_array->max )
     {
     
         // Double the size
-        p_array->iterable_max *= 2;
+        p_array->max *= 2;
     
         // Reallocate iterable arrays
-        p_array->elements = ARRAY_REALLOC(p_array->elements, p_array->iterable_max * sizeof(void *));
+        p_array = ARRAY_REALLOC(p_array, sizeof(array) + (p_array->max * sizeof(void *)));
     
         // Error checking
-        if ( p_array->elements == (void *) 0 ) goto no_mem;
+        if ( p_array == (void *) 0 ) goto no_mem;
     }
 
     // Unlock
@@ -565,14 +566,14 @@ int array_add ( array *const p_array, void *const p_element )
     }
 }
 
-int array_set ( array *const p_array, signed index, void *const p_value )
+int array_set ( array *p_array, signed index, void *p_value )
 {
     
     // Argument check   
     if ( p_array == (void *) 0 ) goto no_array;
 
     // State check
-    if ( p_array->element_count == 0 ) goto no_elements;
+    if ( p_array->count == 0 ) goto no_elements;
     
     // Initialized data
     size_t _index = 0;
@@ -581,13 +582,13 @@ int array_set ( array *const p_array, signed index, void *const p_value )
     mutex_lock(&p_array->_lock);
 
     // Error check
-    if ( p_array->element_count == (size_t) abs(index) ) goto bounds_error;
+    if ( p_array->count == (size_t) abs(index) ) goto bounds_error;
 
     // Store the correct index
-    _index = ( index >= 0 ) ? (size_t) index : (size_t) p_array->element_count - (size_t) abs(index);
+    _index = ( index >= 0 ) ? (size_t) index : (size_t) p_array->count - (size_t) abs(index);
     
     // Store the element
-    p_array->elements[_index] = p_value;
+    p_array->_p_elements[_index] = p_value;
 
     // Unlock
     mutex_unlock(&p_array->_lock);
@@ -641,7 +642,7 @@ int array_remove ( array *const p_array, signed index, void **const pp_value )
     if ( p_array == (void *) 0 ) goto no_array;
 
     // State check
-    if ( p_array->element_count == 0 ) goto no_elements;
+    if ( p_array->count == 0 ) goto no_elements;
     
     // Initialized data
     size_t _index = 0;
@@ -650,27 +651,27 @@ int array_remove ( array *const p_array, signed index, void **const pp_value )
     mutex_lock(&p_array->_lock);
 
     // Error check
-    if ( p_array->element_count == (size_t) abs(index) ) goto bounds_error;
+    if ( p_array->count == (size_t) abs(index) ) goto bounds_error;
 
     // Store the correct index
-    _index = ( index >= 0 ) ? (size_t) index : (size_t) p_array->element_count - (size_t) abs(index);
+    _index = ( index >= 0 ) ? (size_t) index : (size_t) p_array->count - (size_t) abs(index);
     
     // Store the element
-    if ( pp_value != (void *) 0 ) *pp_value = p_array->elements[_index];
+    if ( pp_value != (void *) 0 ) *pp_value = p_array->_p_elements[_index];
 
     // Edge case
-    if ( (size_t) index == p_array->element_count-1 ) goto done;
+    if ( (size_t) index == p_array->count-1 ) goto done;
 
     // Iterate from the index of the removed element to the end of the array
-    for (size_t i = _index; i < p_array->element_count-1; i++)
+    for (size_t i = _index; i < p_array->count-1; i++)
     
         // Shift elements
-        p_array->elements[i] = p_array->elements[i+1];
+        p_array->_p_elements[i] = p_array->_p_elements[i+1];
 
     done:
 
     // Decrement the element counter
-    p_array->element_count--;
+    p_array->count--;
 
     // Unlock
     mutex_unlock(&p_array->_lock);
@@ -727,10 +728,10 @@ int array_clear ( array *const p_array )
     mutex_lock(&p_array->_lock);
 
     // Clear the entries
-    memset(p_array->elements, 0, sizeof(void*)*p_array->iterable_max);
+    memset(p_array->_p_elements, 0, sizeof(void*)*p_array->max);
 
     // Clear the element counter
-    p_array->element_count = 0;
+    p_array->count = 0;
 
     // Unlock
     mutex_unlock(&p_array->_lock);
@@ -763,18 +764,18 @@ int array_free_clear ( array *const p_array, void (*const free_fun_ptr)(void *) 
     if ( free_fun_ptr == (void *) 0 ) goto no_free_func;
 
     // Iterate over each element in the array
-    for (size_t i = 0; i < p_array->element_count; i++)
+    for (size_t i = 0; i < p_array->count; i++)
     {
         
         // Call the free function
-        free_fun_ptr(p_array->elements[i]);
+        free_fun_ptr(p_array->_p_elements[i]);
 
         // Clear the reference from the array
-        p_array->elements[i] = 0;
+        p_array->_p_elements[i] = 0;
     }
 
     // Clear the element counter
-    p_array->element_count = 0;
+    p_array->count = 0;
 
     // Success
     return 1;
@@ -811,10 +812,10 @@ int array_foreach_i ( array *const p_array, fn_array_foreach_i *pfn_array_foreac
     if ( pfn_array_foreach_i == (void *) 0 ) goto no_free_func;
 
     // Iterate over each element in the array
-    for (size_t i = 0; i < p_array->element_count; i++)
+    for (size_t i = 0; i < p_array->count; i++)
         
         // Call the function
-        pfn_array_foreach_i(p_array->elements[i], i);
+        pfn_array_foreach_i(p_array->_p_elements[i], i);
 
     // Success
     return 1;
@@ -854,7 +855,7 @@ int array_log ( array *p_array, void *pfn_next, const char *const format, ... )
     log_info("=== %s : %p ===\n", format, p_array);
 
     // Iterate over each element in the array
-    for (size_t i = 0; i < p_array->element_count; i++)
+    for (size_t i = 0; i < p_array->count; i++)
         
         // Call the function
         ;// TODO
@@ -906,9 +907,6 @@ int array_destroy ( array **const pp_array )
 
     // Unlock
     mutex_unlock(&p_array->_lock);
-
-    // Free the array contents
-    if ( ARRAY_REALLOC(p_array->elements, 0) ) goto failed_to_free;
 
     // Destroy the mutex
     mutex_destroy(&p_array->_lock);

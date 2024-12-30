@@ -63,7 +63,7 @@ DLLEXPORT void array_init ( void ) __attribute__((constructor));
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int array_create ( array **const pp_array );
+DLLEXPORT int array_create ( array **pp_array );
 
 // Constructors
 /** !
@@ -77,7 +77,7 @@ DLLEXPORT int array_create ( array **const pp_array );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int array_construct ( array **const pp_array, size_t size );
+DLLEXPORT int array_construct ( array **pp_array, size_t size );
 
 /** !
  *  Construct an array from an array of elements
@@ -91,7 +91,7 @@ DLLEXPORT int array_construct ( array **const pp_array, size_t size );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int array_from_elements ( array **const pp_array, void *const *const elements );
+DLLEXPORT int array_from_elements ( array **pp_array, void *_p_elements[] );
 
 /** !
  *  Construct an array from parameters
