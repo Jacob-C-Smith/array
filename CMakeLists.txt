@@ -21,6 +21,12 @@ else()
     add_compile_definitions(NDEBUG)
 endif ()
 
+# Build sync with timer
+add_compile_definitions(BUILD_SYNC_WITH_TIMER)
+
+# Build sync with mutex
+add_compile_definitions(BUILD_SYNC_WITH_MUTEX)
+
 # Find the sync module
 if ( NOT "${HAS_SYNC}")
 
@@ -70,12 +76,12 @@ target_link_libraries(array_example array)
 
 # Add source to the tester
 add_executable (array_test "array_test.c")
-add_dependencies(array_test array log)
+add_dependencies(array_test array sync log)
 target_include_directories(array_test PUBLIC ${ARRAY_INCLUDE_DIR} ${SYNC_INCLUDE_DIR} ${LOG_INCLUDE_DIR})
-target_link_libraries(array_test array log)
+target_link_libraries(array_test array sync log)
 
 # Add source to this project's library
 add_library (array SHARED "array.c")
-add_dependencies(array sync)
-target_include_directories(array PUBLIC ${ARRAY_INCLUDE_DIR} ${SYNC_INCLUDE_DIR})
-target_link_libraries(array sync)
+add_dependencies(array sync log)
+target_include_directories(array PUBLIC ${ARRAY_INCLUDE_DIR} ${SYNC_INCLUDE_DIR} ${LOG_INCLUDE_DIR})
+target_link_libraries(array sync log)
