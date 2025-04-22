@@ -14,7 +14,7 @@
 #include <array/array.h>
 
 // Forward declarations
-void lower_case_string ( const void *const p_value, size_t i );
+int lower_case_string ( const void *const p_value, size_t i );
 
 // Entry point
 int main ( int argc, const char* argv[] )
@@ -42,7 +42,7 @@ int main ( int argc, const char* argv[] )
     array_add(p_array, "Blue");
 
     // Print the arrays' elements
-    array_foreach_i(p_array, (fn_array_foreach_i *)&lower_case_string);
+    array_foreach_i(p_array, (fn_array_foreach_i *)lower_case_string);
 
     // Get a slice of the array
     array_slice(p_array, (void**)slice_of_array, 0, 1);
@@ -62,7 +62,7 @@ int main ( int argc, const char* argv[] )
 }
 
 // Print the arrays' elements
-void lower_case_string ( const void *const p_value, size_t i )
+int lower_case_string ( const void *const p_value, size_t i )
 {
 
     // Supress compiler warnings
@@ -80,6 +80,6 @@ void lower_case_string ( const void *const p_value, size_t i )
     // Print the element
     printf("%s\n", (const char *const)&_item);
     
-    // Done
-    return;
+    // Success
+    return 1;
 }
