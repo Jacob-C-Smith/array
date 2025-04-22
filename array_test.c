@@ -11,10 +11,13 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-// Log module
+// log module
 #include <log/log.h>
 
-// Array module
+// sync module
+#include <sync/sync.h>
+
+// array module
 #include <array/array.h>
 
 // Enumeration definitions
@@ -726,7 +729,7 @@ void construct_empty ( array **pp_array )
 {
 
     // Construct an array
-    array_construct(pp_array, 1);
+    array_construct(pp_array, 4);
 
     // array = []
     return;
