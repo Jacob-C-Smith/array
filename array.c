@@ -12,10 +12,10 @@
 // Structure definitions
 struct array_s
 {
-    size_t   count,           // Quantity of elements in array
-             max;             // Quantity of elements array can hold 
-    mutex    _lock;           // Locked when writing values
-    void    **p_p_elements[]; // Array contents
+    size_t   count,         // Quantity of elements in array
+             max;           // Quantity of elements array can hold 
+    mutex    _lock;         // Locked when writing values
+    void    **p_p_elements; // Array contents
 };
 
 // Data
@@ -106,10 +106,10 @@ int array_construct ( array **const pp_array, size_t size )
     p_array->max   = size;
 
     // Allocate "size" number of properties
-    p_array = ARRAY_REALLOC(p_array, sizeof(array) + (p_array->max * sizeof(void *)));
+    p_array->p_p_elements = ARRAY_REALLOC(0, p_array->max * sizeof(void *));
 
     // Error checking
-    if ( p_array == (void *) 0 ) goto no_mem;
+    if ( p_array->p_p_elements == (void *) 0 ) goto no_mem;
 
     // Create a mutex
     if ( mutex_create(&p_array->_lock) == 0 ) goto failed_to_create_mutex;
@@ -545,7 +545,7 @@ int array_add ( array *p_array, void *p_element )
         p_array->max *= 2;
     
         // Reallocate iterable arrays
-        p_array = ARRAY_REALLOC(p_array, sizeof(array) + (p_array->max * sizeof(void *)));
+        p_array->p_p_elements = ARRAY_REALLOC(p_array->p_p_elements, p_array->max * sizeof(void *));
     
         // Error checking
         if ( p_array == (void *) 0 ) goto no_mem;
